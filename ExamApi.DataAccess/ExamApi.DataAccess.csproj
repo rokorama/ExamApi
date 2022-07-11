@@ -4,11 +4,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.6" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.6" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.6"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.6"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.6"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ExamApi.Models\ExamApi.Models.csproj" />
+    <ProjectReference Include="..\ExamApi.Models\ExamApi.Models.csproj"/>
   </ItemGroup>
 </Project>
