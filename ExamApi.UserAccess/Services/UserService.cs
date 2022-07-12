@@ -6,10 +6,12 @@ namespace ExamApi.UserAccess;
 public class UserService : IUserService
 {
     private IUserRepository _userRepo;
+    private IJwtService _jwtService;
 
-    public UserService(IUserRepository userRepo)
+    public UserService(IUserRepository userRepo, IJwtService jwtService)
     {
         _userRepo = userRepo;
+        _jwtService = jwtService;
     }
 
     public User CreateUser(string username, string password)
@@ -21,11 +23,6 @@ public class UserService : IUserService
             Username = username,
             Password = passwordHash,
             Role = "User",
-            // placeholder data
-            // PersonalInfo = new PersonalInfo()
-            // {
-            //     Id = Guid.NewGuid()
-            // }
         };
         return _userRepo.AddNewUser(user);
     }
@@ -40,12 +37,25 @@ public class UserService : IUserService
         return _userRepo.GetUser(id);
     }
 
-    public bool GrantAdminRights(string username)
+    public string Login(string username, string password)
     {
-        throw new NotImplementedException();
+        var user = GetUser(username);
+        if (!VerifyPasswordHash(password, user.Password))
+            throw new Exception("Incorrect credentials");
+        return _jwtService.GetJwtToken(user.Username, user.Role);
     }
 
-    public string Login(string username, string password)
+    private void CreatePassword(string password, out string passwordHash)
+    {
+        passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
+    }
+
+    private bool VerifyPasswordHash(string password, string storedHash)
+    {
+        return BCrypt.Net.BCrypt.Verify(password, storedHash);
+    }
+
+    public bool GrantAdminRights(string username)
     {
         throw new NotImplementedException();
     }
@@ -53,10 +63,5 @@ public class UserService : IUserService
     public bool RevokeUserRights(string username)
     {
         throw new NotImplementedException();
-    }
-
-    private void CreatePassword(string password, out string passwordHash)
-    {
-        passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
     }
 }

@@ -27,12 +27,25 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost]
+    [HttpPost("signup")]
     public ActionResult<User> Signup(string username, string password)
     {
         var newUser = _userService.CreateUser(username, password);
         if (newUser == null)
             return BadRequest();
         return Created(new Uri(Request.GetEncodedUrl() + "/" + newUser.Id), newUser);
+    }
+
+    [HttpGet("login")]
+    public ActionResult<string> Login(string username, string password)
+    {
+        try
+        {
+            return _userService.Login(username, password);
+        }
+        catch (Exception)
+        {
+            return BadRequest("Invalid credentials");
+        }
     }
 }
