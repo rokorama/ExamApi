@@ -18,6 +18,7 @@ public class UserController : ControllerBase
         _userService = userService;
     }
 
+    // placeholder, for now
     [HttpGet("{id}")]
     public ActionResult<User> GetUser([FromRoute] Guid id)
     {
@@ -28,20 +29,20 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("signup")]
-    public ActionResult<User> Signup(string username, string password)
+    public ActionResult<User> Signup([FromForm] UserDto userDto)
     {
-        var newUser = _userService.CreateUser(username, password);
+        var newUser = _userService.CreateUser(userDto.Username, userDto.Password);
         if (newUser == null)
             return BadRequest();
         return Created(new Uri(Request.GetEncodedUrl() + "/" + newUser.Id), newUser);
     }
 
-    [HttpGet("login")]
-    public ActionResult<string> Login(string username, string password)
+    [HttpPost("login")]
+    public ActionResult<string> Login([FromForm] UserDto userDto)
     {
         try
         {
-            return _userService.Login(username, password);
+            return _userService.Login(userDto.Username, userDto.Password);
         }
         catch (Exception)
         {
