@@ -7,5 +7,10 @@
   <ItemGroup>
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.21.0"/>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.7"/>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3"/>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ExamApi.DataAccess\ExamApi.DataAccess.csproj"/>
+    <ProjectReference Include="..\ExamApi.Models\ExamApi.Models.csproj"/>
   </ItemGroup>
 </Project>
