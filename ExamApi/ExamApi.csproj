@@ -12,5 +12,6 @@
   <ItemGroup>
     <ProjectReference Include="..\ExamApi.DataAccess\ExamApi.DataAccess.csproj" />
     <ProjectReference Include="..\ExamApi.UserAccess\ExamApi.UserAccess.csproj" />
+    <ProjectReference Include="..\ExamApi.BusinessLogic\ExamApi.BusinessLogic.csproj" />
   </ItemGroup>
 </Project>

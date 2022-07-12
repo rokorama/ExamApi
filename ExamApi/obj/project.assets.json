@@ -742,6 +742,20 @@
           }
         }
       },
+      "ExamApi.BusinessLogic/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "ExamApi.DataAccess": "1.0.0",
+          "ExamApi.Models": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/ExamApi.BusinessLogic.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ExamApi.BusinessLogic.dll": {}
+        }
+      },
       "ExamApi.DataAccess/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
@@ -2220,6 +2234,11 @@
         "version.txt"
       ]
     },
+    "ExamApi.BusinessLogic/1.0.0": {
+      "type": "project",
+      "path": "../ExamApi.BusinessLogic/ExamApi.BusinessLogic.csproj",
+      "msbuildProject": "../ExamApi.BusinessLogic/ExamApi.BusinessLogic.csproj"
+    },
     "ExamApi.DataAccess/1.0.0": {
       "type": "project",
       "path": "../ExamApi.DataAccess/ExamApi.DataAccess.csproj",
@@ -2238,6 +2257,7 @@
   },
   "projectFileDependencyGroups": {
     "net6.0": [
+      "ExamApi.BusinessLogic >= 1.0.0",
       "ExamApi.DataAccess >= 1.0.0",
       "ExamApi.UserAccess >= 1.0.0",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 6.0.7",
@@ -2271,6 +2291,9 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
+            "/Users/crisc/csharp/ExamApi/ExamApi.BusinessLogic/ExamApi.BusinessLogic.csproj": {
+              "projectPath": "/Users/crisc/csharp/ExamApi/ExamApi.BusinessLogic/ExamApi.BusinessLogic.csproj"
+            },
             "/Users/crisc/csharp/ExamApi/ExamApi.DataAccess/ExamApi.DataAccess.csproj": {
               "projectPath": "/Users/crisc/csharp/ExamApi/ExamApi.DataAccess/ExamApi.DataAccess.csproj"
             },

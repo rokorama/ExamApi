@@ -1,3 +1,4 @@
+using ExamApi.BusinessLogic;
 using ExamApi.DataAccess;
 using ExamApi.UserAccess;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,6 +15,11 @@ builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(connString))
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPersonalInfoRepository, PersonalInfoRepository>();
+builder.Services.AddScoped<IResidenceInfoRepository, ResidenceInfoRepository>();
+
+builder.Services.AddScoped<IPersonalInfoService, PersonalInfoService>();
+builder.Services.AddScoped<IResidenceInfoService, ResidenceInfoService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

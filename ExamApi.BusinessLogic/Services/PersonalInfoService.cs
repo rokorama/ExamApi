@@ -11,6 +11,7 @@ public class PersonalInfoService : IPersonalInfoService
     {
         _personalInfoRepo = personalInfoRepo;
     }
+
     public PersonalInfo AddPersonalInfo(Guid userId, PersonalInfoDto personalInfoDto)
     {
         if (_personalInfoRepo.GetInfo(userId) != null)
@@ -22,6 +23,7 @@ public class PersonalInfoService : IPersonalInfoService
             LastName = personalInfoDto.LastName,
             PersonalNumber = personalInfoDto.PersonalNumber,
             Email = personalInfoDto.Email,
+            // !! implement resizing photos
             Photo = ConvertImageUploadToBytes(personalInfoDto.ImageUpload)
         };
         if (_personalInfoRepo.AddInfo(personalInfo))
