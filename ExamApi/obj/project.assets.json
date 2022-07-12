@@ -761,6 +761,9 @@
       "ExamApi.Models/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "Swashbuckle.AspNetCore": "6.2.3"
+        },
         "compile": {
           "bin/placeholder/ExamApi.Models.dll": {}
         },
