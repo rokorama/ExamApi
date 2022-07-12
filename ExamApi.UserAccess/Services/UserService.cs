@@ -24,6 +24,26 @@ public class UserService : IUserService
         return _userRepo.AddNewUser(user);
     }
 
+    public User GetUser(string username)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool GrantAdminRights(string username)
+    {
+        throw new NotImplementedException();
+    }
+
+    public string Login(string username, string password)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool RevokeUserRights(string username)
+    {
+        throw new NotImplementedException();
+    }
+
     private void CreatePassword(string password, out string passwordHash)
     {
         passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
