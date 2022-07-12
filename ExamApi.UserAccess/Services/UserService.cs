@@ -17,9 +17,15 @@ public class UserService : IUserService
         CreatePassword(password, out string passwordHash);
         var user = new User()
         {
+            Id = Guid.NewGuid(),
             Username = username,
             Password = passwordHash,
-            Role = "User"
+            Role = "User",
+            // placeholder data
+            // PersonalInfo = new PersonalInfo()
+            // {
+            //     Id = Guid.NewGuid()
+            // }
         };
         return _userRepo.AddNewUser(user);
     }
