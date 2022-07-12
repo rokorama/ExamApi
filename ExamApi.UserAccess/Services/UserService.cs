@@ -32,7 +32,12 @@ public class UserService : IUserService
 
     public User GetUser(string username)
     {
-        throw new NotImplementedException();
+        return _userRepo.GetUser(username);
+    }
+
+    public User GetUser(Guid id)
+    {
+        return _userRepo.GetUser(id);
     }
 
     public bool GrantAdminRights(string username)

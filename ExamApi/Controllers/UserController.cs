@@ -18,6 +18,15 @@ public class UserController : ControllerBase
         _userService = userService;
     }
 
+    [HttpGet("{id}")]
+    public ActionResult<User> GetUser([FromRoute] Guid id)
+    {
+        var result = _userService.GetUser(id);
+        if (result == null)
+            return BadRequest();
+        return Ok(result);
+    }
+
     [HttpPost]
     public ActionResult<User> Signup(string username, string password)
     {

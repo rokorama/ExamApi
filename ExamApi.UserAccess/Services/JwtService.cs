@@ -14,11 +14,12 @@ public class JwtService : IJwtService
         _iConfig = iConfig;
     }
 
-    public string GetJwtToken(string username)
+    public string GetJwtToken(string username, string role)
     {
         List<Claim> claims = new List<Claim>()
         {
-            new Claim(ClaimTypes.Name, username)
+            new Claim(ClaimTypes.Name, username),
+            new Claim(ClaimTypes.Role, role)
         };
 
         var secretToken = _iConfig.GetSection("Jwt:Secret").Value;

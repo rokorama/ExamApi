@@ -16,6 +16,11 @@ public class UserRepository : IUserRepository
         return _dbContext.Users.FirstOrDefault(x => x.Username == username);
     }
 
+    public User GetUser(Guid id)
+    {
+        return _dbContext.Users.Find(id);
+    }
+
     // no nulls please
     public User AddNewUser(User user)
     {
