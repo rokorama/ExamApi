@@ -6,4 +6,5 @@ public class PersonalInfoDto
     public string LastName  { get; set; }
     public int PersonalNumber { get; set; }
     public string Email { get; set; }
+    public ImageUploadRequest ImageUpload { get; set; }
 }
