@@ -1,5 +1,8 @@
 using ExamApi.DataAccess;
 using ExamApi.Models;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Processing;
 
 namespace ExamApi.BusinessLogic;
 
@@ -23,8 +26,7 @@ public class PersonalInfoService : IPersonalInfoService
             LastName = personalInfoDto.LastName,
             PersonalNumber = personalInfoDto.PersonalNumber,
             Email = personalInfoDto.Email,
-            // !! implement resizing photos
-            Photo = ConvertImageUploadToBytes(personalInfoDto.ImageUpload)
+            Photo = ConvertImage(personalInfoDto.ImageUpload)
         };
         if (_personalInfoRepo.AddInfo(personalInfo))
             return personalInfo;
@@ -38,10 +40,21 @@ public class PersonalInfoService : IPersonalInfoService
         return _personalInfoRepo.GetInfo(userId);
     }
 
-    public byte[] ConvertImageUploadToBytes(ImageUploadRequest imageUploadRequest)
+    public byte[] ConvertImage(ImageUploadRequest imageUploadRequest)
     {
         using var memoryStream = new MemoryStream();
         imageUploadRequest.Image.CopyTo(memoryStream);
-        return memoryStream.ToArray();
+        return ResizeImage(memoryStream.ToArray());
+    }
+
+    private byte[] ResizeImage(byte[] imageBytes)
+    {
+        using (Image image = Image.Load(imageBytes))
+        {
+            image.Mutate(x => x.Resize(200, 200));
+            var outStream = new MemoryStream();
+            image.Save(outStream, new JpegEncoder());
+            return outStream.ToArray();
+        }
     }
 }
