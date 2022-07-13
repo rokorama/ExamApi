@@ -1,6 +1,6 @@
 namespace ExamApi.Models;
 
-public class PlaceOfResidence
+public class ResidenceInfo
 {
     public Guid Id { get; set; }
     public string City { get; set; }

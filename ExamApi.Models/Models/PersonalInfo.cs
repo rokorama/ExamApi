@@ -8,5 +8,5 @@ public class PersonalInfo
     public int PersonalNumber { get; set; }
     public string Email { get; set; }
     public byte[] Photo { get; set; }
-    public PlaceOfResidence PlaceOfResidence { get; set; }
+    public ResidenceInfo ResidenceInfo { get; set; }
 }
