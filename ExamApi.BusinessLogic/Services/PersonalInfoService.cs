@@ -15,7 +15,7 @@ public class PersonalInfoService : IPersonalInfoService
         _personalInfoRepo = personalInfoRepo;
     }
 
-    public PersonalInfo AddPersonalInfo(Guid userId, PersonalInfoDto personalInfoDto)
+    public PersonalInfo AddInfo(Guid userId, PersonalInfoDto personalInfoDto)
     {
         if (_personalInfoRepo.GetInfo(userId) != null)
             throw new Exception($"There are existing data associated with this user");
@@ -26,7 +26,7 @@ public class PersonalInfoService : IPersonalInfoService
             LastName = personalInfoDto.LastName,
             PersonalNumber = personalInfoDto.PersonalNumber,
             Email = personalInfoDto.Email,
-            Photo = ConvertImage(personalInfoDto.ImageUpload)
+            Photo = ConvertImage(personalInfoDto.ImageUpload),
         };
         if (_personalInfoRepo.AddInfo(personalInfo))
             return personalInfo;
@@ -35,7 +35,7 @@ public class PersonalInfoService : IPersonalInfoService
             throw new Exception("The information could not be added, please try again");
     }
 
-    public PersonalInfo GetPersonalInfo(Guid userId)
+    public PersonalInfo GetInfo(Guid userId)
     {
         return _personalInfoRepo.GetInfo(userId);
     }

@@ -4,6 +4,6 @@ namespace ExamApi.BusinessLogic;
 
 public interface IPersonalInfoService
 {
-    public PersonalInfo AddPersonalInfo(Guid userId, PersonalInfoDto personalInfoDto);
-    public PersonalInfo GetPersonalInfo(Guid userId);
+    public PersonalInfo AddInfo(Guid userId, PersonalInfoDto personalInfoDto);
+    public PersonalInfo GetInfo(Guid userId);
 }

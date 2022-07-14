@@ -1,6 +1,6 @@
 namespace ExamApi.Models;
 
-public class PlaceOfResidenceDto
+public class ResidenceInfoDto
 {
     public string City { get; set; }
     public string Street { get; set; }
