@@ -4,6 +4,7 @@ using ExamApi.UserAccess;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace ExamApi.Controllers;
 
@@ -11,18 +12,22 @@ namespace ExamApi.Controllers;
 [Route("[controller]")]
 public class InformationController : ControllerBase
 {
+    // private readonly ILoggerFactory _loggerFactory;
     private readonly ILogger _logger;
     private readonly IPersonalInfoService _personalInfoService;
     private readonly IResidenceInfoService _residenceInfoService;
     
     private readonly IUserService _userService;
 
-    public InformationController(ILogger<InformationController> logger,
+    public InformationController(
+                                // ILoggerFactory loggerFactory,
+                                ILogger logger,
                                  IPersonalInfoService personalInfoService,
                                  IResidenceInfoService residenceInfoService,
                                  // do i need this???
                                  IUserService userService)
     {
+        // _loggerFactory = loggerFactory;
         _logger = logger;
         _personalInfoService = personalInfoService;
         _residenceInfoService = residenceInfoService;
@@ -40,5 +45,17 @@ public class InformationController : ControllerBase
         if (newPersonalInfo == null)
             return BadRequest();
         return Created(new Uri(Request.GetEncodedUrl() + "/" + newPersonalInfo.Id), newPersonalInfo);        
+    }
+
+    [HttpGet("{id}")]
+    public ActionResult<PersonalInfo> GetInfo(Guid id)
+    {
+        // _logger.LogInformation("Fetching all the Students from the storage");
+
+        var data = _personalInfoService.GetInfo(id); //simulation for the data base access
+
+        //  _logger.LogInformation($"Returning information");
+
+        return Ok(data);
     }
 }

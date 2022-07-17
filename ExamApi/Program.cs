@@ -1,5 +1,7 @@
 using ExamApi.BusinessLogic;
+using ExamApi.Controllers;
 using ExamApi.DataAccess;
+using ExamApi.Helpers;
 using ExamApi.UserAccess;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +13,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 string connString = builder.Configuration.GetConnectionString("Database");
 builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(connString));
+
+builder.Services.AddLogging();
+// Configure logging
+// builder.Host.ConfigureLogging(logging =>
+// {
+//     logging.ClearProviders();
+//     logging.AddConsole();
+// });
+
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
@@ -67,6 +78,11 @@ builder.Services.AddSwaggerGen(c =>
     }
 );
 
+// Log.Logger = new LoggerConfiguration()
+//     .MinimumLevel.Debug()
+//     .WriteTo.File("logs/myapp.txt", rollingInterval: RollingInterval.Day)
+//     .CreateLogger();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -81,7 +97,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// migrate any database changes on startup (includes initial db creation)
+using (var scope = app.Services.CreateScope())
+{
+    var dataContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();    
+    dataContext.Database.Migrate();
+}
+
 app.UseHttpsRedirection();
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseAuthentication();
 app.UseRouting();
