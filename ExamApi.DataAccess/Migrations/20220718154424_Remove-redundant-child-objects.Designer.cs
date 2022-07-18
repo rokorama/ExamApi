@@ -4,6 +4,7 @@ using ExamApi.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExamApi.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220718154424_Remove-redundant-child-objects")]
+    partial class Removeredundantchildobjects
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -96,8 +98,6 @@ namespace ExamApi.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PersonalInfoId");
-
                     b.ToTable("Users");
                 });
 
@@ -108,15 +108,6 @@ namespace ExamApi.DataAccess.Migrations
                         .HasForeignKey("AddressId");
 
                     b.Navigation("Address");
-                });
-
-            modelBuilder.Entity("ExamApi.Models.User", b =>
-                {
-                    b.HasOne("ExamApi.Models.PersonalInfo", "PersonalInfo")
-                        .WithMany()
-                        .HasForeignKey("PersonalInfoId");
-
-                    b.Navigation("PersonalInfo");
                 });
 #pragma warning restore 612, 618
         }

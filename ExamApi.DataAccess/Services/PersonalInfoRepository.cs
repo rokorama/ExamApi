@@ -16,18 +16,21 @@ public class PersonalInfoRepository : IPersonalInfoRepository
     {
         // var user = _dbContext.Users.Find(userId);
         // user.PersonalInfo = personalInfo;
-        _dbContext.PersonalInfos.Add(personalInfo);
+        var dbEntry = _dbContext.Users.Find(userId);
+        dbEntry.PersonalInfo = personalInfo;
+        _dbContext.Entry(dbEntry).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+        // _dbContext.PersonalInfos.Find(userId).
         var result = _dbContext.SaveChanges();
         return result > 0;
     }
 
-    public bool DeleteInfo(User user)
-    {
-        var infoToDelete = _dbContext.PersonalInfos.Find(user.PersonalInfo.Id);
-        _dbContext.PersonalInfos.Remove(infoToDelete);
-        var result = _dbContext.SaveChanges();
-        return result > 0;
-    }
+    // public bool DeleteInfo(User user)
+    // {
+    //     var infoToDelete = _dbContext.PersonalInfos.Find(user.PersonalInfo.Id);
+    //     _dbContext.PersonalInfos.Remove(infoToDelete);
+    //     var result = _dbContext.SaveChanges();
+    //     return result > 0;
+    // }
 
     // implement these
     public bool EditInfo(Guid userId, User user)

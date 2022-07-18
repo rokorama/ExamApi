@@ -1,4 +1,5 @@
 using ExamApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ExamApi.DataAccess;
 
@@ -16,9 +17,9 @@ public class UserRepository : IUserRepository
         return _dbContext.Users.FirstOrDefault(x => x.Username == username);
     }
 
-    public User GetUser(Guid id)
+    public User GetUser(Guid userId)
     {
-        return _dbContext.Users.Find(id);
+        return _dbContext.Users.Include(u => u.PersonalInfo).SingleOrDefault(i => i.Id == userId);
     }
 
     // no nulls please

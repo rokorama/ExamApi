@@ -14,15 +14,6 @@ var builder = WebApplication.CreateBuilder(args);
 string connString = builder.Configuration.GetConnectionString("Database");
 builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(connString));
 
-builder.Services.AddLogging();
-// Configure logging
-// builder.Host.ConfigureLogging(logging =>
-// {
-//     logging.ClearProviders();
-//     logging.AddConsole();
-// });
-
-
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -77,11 +68,6 @@ builder.Services.AddSwaggerGen(c =>
         });
     }
 );
-
-// Log.Logger = new LoggerConfiguration()
-//     .MinimumLevel.Debug()
-//     .WriteTo.File("logs/myapp.txt", rollingInterval: RollingInterval.Day)
-//     .CreateLogger();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -8,7 +8,7 @@ public static class ObjectMapper
     {
         return new PersonalInfo()
         {
-            Id = Guid.NewGuid(),
+            // Id = Guid.NewGuid(),
             FirstName = uploadRequest.FirstName,
             LastName = uploadRequest.LastName,
             PersonalNumber = uploadRequest.PersonalNumber,
@@ -36,7 +36,7 @@ public static class ObjectMapper
     {
         return new Address()
         {
-            Id = Guid.NewGuid(),
+            // Id = Guid.NewGuid(),
             City = addressDto.City,
             Street = addressDto.Street,
             House = addressDto.House,

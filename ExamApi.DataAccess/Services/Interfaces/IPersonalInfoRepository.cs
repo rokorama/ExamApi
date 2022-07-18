@@ -7,5 +7,5 @@ public interface IPersonalInfoRepository
     public PersonalInfo GetInfo(Guid userId);
     public bool AddInfo(PersonalInfo personalInfo, Guid userId);
     public bool EditInfo(Guid userId, User user);
-    public bool DeleteInfo(User user);
+    // public bool DeleteInfo(User user);
 }
