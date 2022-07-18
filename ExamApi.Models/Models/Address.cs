@@ -10,6 +10,5 @@ public class Address
     public string Street { get; set; }
     public string House { get; set; }
     public int? Flat { get; set; }
-    
     public virtual PersonalInfo PersonalInfo { get; set; }
 }

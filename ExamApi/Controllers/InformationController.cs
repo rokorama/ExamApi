@@ -4,7 +4,6 @@ using ExamApi.UserAccess;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace ExamApi.Controllers;
 
@@ -12,16 +11,12 @@ namespace ExamApi.Controllers;
 [Route("[controller]")]
 public class InformationController : ControllerBase
 {
-    // private readonly ILoggerFactory _loggerFactory;
-    // private readonly ILogger _logger;
     private readonly IPersonalInfoService _personalInfoService;
     private readonly IAddressService _addressService;
     
     private readonly IUserService _userService;
 
     public InformationController(
-                                // ILoggerFactory loggerFactory,
-                                // ILogger logger,
                                  IPersonalInfoService personalInfoService,
                                  IAddressService addressService,
                                  // do i need this???
@@ -34,24 +29,21 @@ public class InformationController : ControllerBase
         _userService = userService;
     }
 
-    // [Authorize]
+    [Authorize]
     [HttpPost]
-    public ActionResult<PersonalInfo> AddPersonalInfo([FromForm] PersonalInfoDto personalInfoDto)
+    public ActionResult<PersonalInfoDto> AddPersonalInfo([FromForm] PersonalInfoUploadRequest uploadRequest)
     {
-        // var userId = _userService.GetUser(this.User.Identity.Name).Id;
-        var userId = Guid.NewGuid();
-        var newPersonalInfo = _personalInfoService.AddInfo(userId, personalInfoDto);
-        // ditch the null
-        // if (newPersonalInfo == null)
-        //     return BadRequest();
-        return Created(new Uri(Request.GetEncodedUrl() + "/" + newPersonalInfo.Id), newPersonalInfo);        
+        var userId = _userService.GetUser(this.User.Identity.Name).Id;
+        var createdEntry = _personalInfoService.AddInfo(uploadRequest, userId);
+        var result = ObjectMapper.MapPersonalInfoDto(createdEntry);
+        return Created(new Uri(Request.GetEncodedUrl() + "/" + createdEntry.Id), result);        
     }
 
     [HttpGet("{id}")]
-    public ActionResult<PersonalInfo> GetInfo(Guid id)
+    public ActionResult<PersonalInfoDto> GetInfo(Guid id)
     {
-        var data = _personalInfoService.GetInfo(id); //simulation for the data base access
-
-        return Ok(data);
+        if (!_personalInfoService.GetInfo(id, out var result))
+            return NotFound();
+        return Ok(result);
     }
 }

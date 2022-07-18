@@ -17,36 +17,35 @@ public class PersonalInfoService : IPersonalInfoService
         _addressService = addressService;
     }
 
-    public PersonalInfo AddInfo(Guid userId, PersonalInfoDto personalInfoDto)
+    public PersonalInfo AddInfo(PersonalInfoUploadRequest uploadRequest, Guid userId)
     {
         // if (_personalInfoRepo.GetInfo(userId) != null)
         //     throw new Exception($"There are existing data associated with this user");
-        var personalInfo = new PersonalInfo()
-        {
-            Id = Guid.NewGuid(),
-            FirstName = personalInfoDto.FirstName,
-            LastName = personalInfoDto.LastName,
-            PersonalNumber = personalInfoDto.PersonalNumber,
-            Email = personalInfoDto.Email,
-            Photo = ImageConverter.ConvertImage(personalInfoDto.ImageUpload),
-            Address = new Address()
-            {
-                Id = Guid.NewGuid(),
-                City = personalInfoDto.Address.City,
-                Street = personalInfoDto.Address.Street,
-                House = personalInfoDto.Address.House,
-                Flat = personalInfoDto.Address.Flat,
-            }
-        };
-        if (_personalInfoRepo.AddInfo(personalInfo))
+        var personalInfo = ObjectMapper.MapPersonalInfoUpload(uploadRequest);
+        if (_personalInfoRepo.AddInfo(personalInfo, userId))
             return personalInfo;
         // handle this
         else
             throw new Exception("The information could not be added, please try again");
     }
 
-    public PersonalInfo GetInfo(Guid userId)
+    public bool GetInfo(Guid userId)
     {
-        return _personalInfoRepo.GetInfo(userId);
+        var result = _personalInfoRepo.GetInfo(userId);
+        if (result == null)
+            return false;
+        return true;
+    }
+
+    public bool GetInfo(Guid userId, out PersonalInfoDto result)
+    {
+        var entry = _personalInfoRepo.GetInfo(userId);
+        if (entry == null)
+        {
+            result = null;
+            return false;
+        }
+        result = ObjectMapper.MapPersonalInfoDto(entry);
+        return true;
     }
 }

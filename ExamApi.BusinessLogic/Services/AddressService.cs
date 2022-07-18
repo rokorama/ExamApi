@@ -31,8 +31,23 @@ public class AddressService : IAddressService
         _addressRepo.DeleteInfo(id);
     }
 
-    public Address GetInfo(Guid id)
+    public bool GetInfo(Guid id)
     {
-        return _addressRepo.GetInfo(id);
+        var result = _addressRepo.GetInfo(id);
+        if (result == null)
+            return false;
+        return true;
+    }
+
+    public bool GetInfo(Guid id, out AddressDto result)
+    {
+        var entry = _addressRepo.GetInfo(id);
+        if (entry == null)
+        {
+            result = null;
+            return false;
+        }
+        result = ObjectMapper.MapAddressDto(entry);
+        return true;
     }
 }
