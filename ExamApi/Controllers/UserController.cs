@@ -24,7 +24,7 @@ public class UserController : ControllerBase
     {
         var result = _userService.GetUser(id);
         if (result == null)
-            return BadRequest();
+            return NotFound();
         return Ok(result);
     }
 

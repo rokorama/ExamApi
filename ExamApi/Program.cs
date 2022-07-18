@@ -1,7 +1,5 @@
 using ExamApi.BusinessLogic;
-using ExamApi.Controllers;
 using ExamApi.DataAccess;
-using ExamApi.Helpers;
 using ExamApi.UserAccess;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -91,7 +89,6 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseHttpsRedirection();
-app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseAuthentication();
 app.UseRouting();
