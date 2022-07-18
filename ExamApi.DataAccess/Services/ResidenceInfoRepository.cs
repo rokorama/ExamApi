@@ -14,14 +14,14 @@ public class ResidenceInfoRepository : IResidenceInfoRepository
     public void AddInfo(ResidenceInfo info)
     {
         _dbContext.ResidenceInfos.Add(info);
-        try
-        {
+        // try
+        // {
             _dbContext.SaveChanges();
-        }
-        catch (Exception)
-        {
-            // ????
-        }
+        // }
+        // catch (Exception)
+        // {
+        //     // ????
+        // }
     }
 
     public void DeleteInfo(Guid id)

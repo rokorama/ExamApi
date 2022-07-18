@@ -8,6 +8,6 @@ public class User
     public string Username { get; set; }
     public string Password { get; set; }
     public string Role { get; set; }
-    #nullable enable
-    public PersonalInfo? PersonalInfo { get; set; }
+    
+    public virtual PersonalInfo PersonalInfo { get; set; }
 }

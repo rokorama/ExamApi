@@ -34,7 +34,7 @@ public class PersonalInfoRepository : IPersonalInfoRepository
 
     public PersonalInfo GetInfo(Guid userId)
     {
-        return _dbContext.Users.Find(userId).PersonalInfo;
+        return _dbContext.PersonalInfos.SingleOrDefault(i => i.Id == userId);
         // return _dbContext.PersonalInfos.Find(userId);
     }
 }

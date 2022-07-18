@@ -13,7 +13,7 @@ namespace ExamApi.Controllers;
 public class InformationController : ControllerBase
 {
     // private readonly ILoggerFactory _loggerFactory;
-    private readonly ILogger _logger;
+    // private readonly ILogger _logger;
     private readonly IPersonalInfoService _personalInfoService;
     private readonly IResidenceInfoService _residenceInfoService;
     
@@ -21,14 +21,14 @@ public class InformationController : ControllerBase
 
     public InformationController(
                                 // ILoggerFactory loggerFactory,
-                                ILogger logger,
+                                // ILogger logger,
                                  IPersonalInfoService personalInfoService,
                                  IResidenceInfoService residenceInfoService,
                                  // do i need this???
                                  IUserService userService)
     {
         // _loggerFactory = loggerFactory;
-        _logger = logger;
+        // _logger = logger;
         _personalInfoService = personalInfoService;
         _residenceInfoService = residenceInfoService;
         _userService = userService;
@@ -36,25 +36,21 @@ public class InformationController : ControllerBase
 
     // [Authorize]
     [HttpPost]
-    public ActionResult<PersonalInfo> AddPersonalInfo([FromForm] PersonalInfoDto personalInfoDto, [FromForm] ResidenceInfoDto residenceInfoDto)
+    public ActionResult<PersonalInfo> AddPersonalInfo([FromForm] PersonalInfoDto personalInfoDto)
     {
-        var userId = _userService.GetUser(this.User.Identity.Name).Id;
+        // var userId = _userService.GetUser(this.User.Identity.Name).Id;
+        var userId = Guid.NewGuid();
         var newPersonalInfo = _personalInfoService.AddInfo(userId, personalInfoDto);
-        var newResidenceInfo = _residenceInfoService.AddInfo(residenceInfoDto);
         // ditch the null
-        if (newPersonalInfo == null)
-            return BadRequest();
+        // if (newPersonalInfo == null)
+        //     return BadRequest();
         return Created(new Uri(Request.GetEncodedUrl() + "/" + newPersonalInfo.Id), newPersonalInfo);        
     }
 
     [HttpGet("{id}")]
     public ActionResult<PersonalInfo> GetInfo(Guid id)
     {
-        // _logger.LogInformation("Fetching all the Students from the storage");
-
         var data = _personalInfoService.GetInfo(id); //simulation for the data base access
-
-        //  _logger.LogInformation($"Returning information");
 
         return Ok(data);
     }

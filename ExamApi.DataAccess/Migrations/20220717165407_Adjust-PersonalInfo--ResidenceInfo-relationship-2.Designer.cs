@@ -4,6 +4,7 @@ using ExamApi.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExamApi.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220717165407_Adjust-PersonalInfo--ResidenceInfo-relationship-2")]
+    partial class AdjustPersonalInfoResidenceInforelationship2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,7 +26,7 @@ namespace ExamApi.DataAccess.Migrations
 
             modelBuilder.Entity("ExamApi.Models.PersonalInfo", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("PersonalInfoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -43,17 +45,14 @@ namespace ExamApi.DataAccess.Migrations
                     b.Property<byte[]>("Photo")
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<Guid>("ResidenceInfoGuid")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
+                    b.HasKey("PersonalInfoId");
 
                     b.ToTable("PersonalInfos");
                 });
 
             modelBuilder.Entity("ExamApi.Models.ResidenceInfo", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("ResidenceInfoId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("City")
@@ -68,7 +67,7 @@ namespace ExamApi.DataAccess.Migrations
                     b.Property<string>("Street")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("ResidenceInfoId");
 
                     b.ToTable("ResidenceInfos");
                 });
@@ -102,7 +101,7 @@ namespace ExamApi.DataAccess.Migrations
                 {
                     b.HasOne("ExamApi.Models.PersonalInfo", "PersonalInfo")
                         .WithOne("ResidenceInfo")
-                        .HasForeignKey("ExamApi.Models.ResidenceInfo", "Id")
+                        .HasForeignKey("ExamApi.Models.ResidenceInfo", "ResidenceInfoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

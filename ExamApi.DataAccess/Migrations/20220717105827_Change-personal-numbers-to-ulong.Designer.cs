@@ -4,6 +4,7 @@ using ExamApi.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExamApi.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220717105827_Change-personal-numbers-to-ulong")]
+    partial class Changepersonalnumberstoulong
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,9 +45,6 @@ namespace ExamApi.DataAccess.Migrations
                     b.Property<byte[]>("Photo")
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<Guid>("ResidenceInfoGuid")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.ToTable("PersonalInfos");
@@ -54,6 +53,7 @@ namespace ExamApi.DataAccess.Migrations
             modelBuilder.Entity("ExamApi.Models.ResidenceInfo", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("City")
@@ -65,10 +65,16 @@ namespace ExamApi.DataAccess.Migrations
                     b.Property<string>("House")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("PersonalInfoId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Street")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PersonalInfoId")
+                        .IsUnique();
 
                     b.ToTable("ResidenceInfos");
                 });
@@ -100,13 +106,11 @@ namespace ExamApi.DataAccess.Migrations
 
             modelBuilder.Entity("ExamApi.Models.ResidenceInfo", b =>
                 {
-                    b.HasOne("ExamApi.Models.PersonalInfo", "PersonalInfo")
+                    b.HasOne("ExamApi.Models.PersonalInfo", null)
                         .WithOne("ResidenceInfo")
-                        .HasForeignKey("ExamApi.Models.ResidenceInfo", "Id")
+                        .HasForeignKey("ExamApi.Models.ResidenceInfo", "PersonalInfoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("PersonalInfo");
                 });
 
             modelBuilder.Entity("ExamApi.Models.User", b =>

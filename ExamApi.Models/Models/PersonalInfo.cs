@@ -5,8 +5,9 @@ public class PersonalInfo
     public Guid Id { get; set; }
     public string FirstName  { get; set; }
     public string LastName  { get; set; }
-    public int PersonalNumber { get; set; }
+    public ulong PersonalNumber { get; set; }
     public string Email { get; set; }
     public byte[] Photo { get; set; }
-    public ResidenceInfo ResidenceInfo { get; set; }
+    public Guid ResidenceInfoGuid { get; set; }
+    public virtual ResidenceInfo ResidenceInfo { get; set; }
 }
