@@ -12,5 +12,5 @@ public class AppDbContext : DbContext
 
     public DbSet<User> Users { get; set; }
     public DbSet<PersonalInfo> PersonalInfos { get; set; }
-    public DbSet<ResidenceInfo> ResidenceInfos { get; set; }
+    public DbSet<Address> Addresses { get; set; }
 }

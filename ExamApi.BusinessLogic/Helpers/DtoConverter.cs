@@ -12,19 +12,19 @@ public static class DtoEntityMapper
             PersonalNumber = personalInfoDto.PersonalNumber,
             Email = personalInfoDto.Email,
             Photo = ImageConverter.ConvertImage(personalInfoDto.ImageUpload),
-            ResidenceInfo = MapResidenceInfoEntity(personalInfoDto.ResidenceInfo)
+            Address = MapAddressEntity(personalInfoDto.Address)
         };
     }
 
-    public static ResidenceInfo MapResidenceInfoEntity(ResidenceInfoDto residenceInfoDto)
+    public static Address MapAddressEntity(AddressDto addressDto)
     {
-        return new ResidenceInfo()
+        return new Address()
         {
             Id = Guid.NewGuid(),
-            City = residenceInfoDto.City,
-            Street = residenceInfoDto.Street,
-            House = residenceInfoDto.House,
-            Flat = residenceInfoDto.Flat,
+            City = addressDto.City,
+            Street = addressDto.Street,
+            House = addressDto.House,
+            Flat = addressDto.Flat,
         };
     }
 
@@ -37,18 +37,18 @@ public static class DtoEntityMapper
             PersonalNumber = personalInfo.PersonalNumber,
             Email = personalInfo.Email,
             // Photo = personalInfo.Photo,
-            ResidenceInfo = MapResidenceInfoDto(personalInfo.ResidenceInfo)
+            Address = MapAddressDto(personalInfo.Address)
         };
     }
 
-    public static ResidenceInfoDto MapResidenceInfoDto(ResidenceInfo residenceInfo)
+    public static AddressDto MapAddressDto(Address address)
     {
-        return new ResidenceInfoDto()
+        return new AddressDto()
         {
-            City = residenceInfo.City,
-            Street = residenceInfo.Street,
-            House = residenceInfo.House,
-            Flat = residenceInfo.Flat
+            City = address.City,
+            Street = address.Street,
+            House = address.House,
+            Flat = address.Flat
         };
     }
 }

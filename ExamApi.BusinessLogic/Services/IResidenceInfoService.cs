@@ -2,9 +2,9 @@ using ExamApi.Models;
 
 namespace ExamApi.BusinessLogic;
 
-public interface IResidenceInfoService
+public interface IAddressService
 {
-    public ResidenceInfo AddInfo(ResidenceInfoDto residenceInfoDto);
-    public ResidenceInfo GetInfo(Guid id);
+    public Address AddInfo(AddressDto addressDto);
+    public Address GetInfo(Guid id);
     public void DeleteInfo(Guid id);
 }

@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ExamApi.Models;
 
-public class ResidenceInfo
+public class Address
 {
     [ForeignKey("PersonalInfo")]
     public Guid Id { get; set; }

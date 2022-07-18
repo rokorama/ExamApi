@@ -2,18 +2,18 @@ using ExamApi.Models;
 
 namespace ExamApi.DataAccess;
 
-public class ResidenceInfoRepository : IResidenceInfoRepository
+public class AddressRepository : IAddressRepository
 {
     private readonly AppDbContext _dbContext;
 
-    public ResidenceInfoRepository(AppDbContext dbContext)
+    public AddressRepository(AppDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
-    public void AddInfo(ResidenceInfo info)
+    public void AddInfo(Address info)
     {
-        _dbContext.ResidenceInfos.Add(info);
+        _dbContext.Addresses.Add(info);
         // try
         // {
             _dbContext.SaveChanges();
@@ -26,8 +26,8 @@ public class ResidenceInfoRepository : IResidenceInfoRepository
 
     public void DeleteInfo(Guid id)
     {
-        var entryToDelete = _dbContext.ResidenceInfos.Find(id);
-        _dbContext.ResidenceInfos.Remove(entryToDelete);
+        var entryToDelete = _dbContext.Addresses.Find(id);
+        _dbContext.Addresses.Remove(entryToDelete);
         try
         {
             _dbContext.SaveChanges();
@@ -38,9 +38,9 @@ public class ResidenceInfoRepository : IResidenceInfoRepository
         }
     }
 
-    public void EditInfo(ResidenceInfo updatedInfo)
+    public void EditInfo(Address updatedInfo)
     {
-        var dbEntry = _dbContext.ResidenceInfos.SingleOrDefault(a => a.Id == updatedInfo.Id);
+        var dbEntry = _dbContext.Addresses.SingleOrDefault(a => a.Id == updatedInfo.Id);
         _dbContext.Entry(dbEntry).CurrentValues.SetValues(updatedInfo);
         try
         {
@@ -52,8 +52,8 @@ public class ResidenceInfoRepository : IResidenceInfoRepository
         }
     }
 
-    public ResidenceInfo GetInfo(Guid id)
+    public Address GetInfo(Guid id)
     {
-        return _dbContext.ResidenceInfos.Find(id);
+        return _dbContext.Addresses.Find(id);
     }
 }

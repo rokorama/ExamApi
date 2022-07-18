@@ -7,5 +7,5 @@ public class PersonalInfoDto
     public ulong PersonalNumber { get; set; }
     public string Email { get; set; }
     public ImageUploadRequest ImageUpload { get; set; }
-    public ResidenceInfoDto ResidenceInfo { get; set; }
+    public AddressDto Address { get; set; }
 }

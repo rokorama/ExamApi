@@ -3,36 +3,36 @@ using ExamApi.Models;
 
 namespace ExamApi.BusinessLogic;
 
-public class ResidenceInfoService : IResidenceInfoService
+public class AddressService : IAddressService
 {
-    private readonly IResidenceInfoRepository _residenceInfoRepo;
+    private readonly IAddressRepository _addressRepo;
 
-    public ResidenceInfoService(IResidenceInfoRepository residenceInfoRepo)
+    public AddressService(IAddressRepository addressRepo)
     {
-        _residenceInfoRepo = residenceInfoRepo;
+        _addressRepo = addressRepo;
     }
 
-    public ResidenceInfo AddInfo(ResidenceInfoDto residenceInfoDto)
+    public Address AddInfo(AddressDto addressDto)
     {
-        var entry = new ResidenceInfo()
+        var entry = new Address()
         {
             Id = Guid.NewGuid(),
-            City = residenceInfoDto.City,
-            Street = residenceInfoDto.Street,
-            House = residenceInfoDto.House,
-            Flat = residenceInfoDto.Flat
+            City = addressDto.City,
+            Street = addressDto.Street,
+            House = addressDto.House,
+            Flat = addressDto.Flat
         };
-        _residenceInfoRepo.AddInfo(entry);
+        _addressRepo.AddInfo(entry);
         return entry;
     }
 
     public void DeleteInfo(Guid id)
     {
-        _residenceInfoRepo.DeleteInfo(id);
+        _addressRepo.DeleteInfo(id);
     }
 
-    public ResidenceInfo GetInfo(Guid id)
+    public Address GetInfo(Guid id)
     {
-        return _residenceInfoRepo.GetInfo(id);
+        return _addressRepo.GetInfo(id);
     }
 }

@@ -8,6 +8,6 @@ public class PersonalInfo
     public ulong PersonalNumber { get; set; }
     public string Email { get; set; }
     public byte[] Photo { get; set; }
-    public Guid ResidenceInfoGuid { get; set; }
-    public virtual ResidenceInfo ResidenceInfo { get; set; }
+    public Guid AddressId { get; set; }
+    public virtual Address Address { get; set; }
 }

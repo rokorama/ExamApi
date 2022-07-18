@@ -15,7 +15,7 @@ public class InformationController : ControllerBase
     // private readonly ILoggerFactory _loggerFactory;
     // private readonly ILogger _logger;
     private readonly IPersonalInfoService _personalInfoService;
-    private readonly IResidenceInfoService _residenceInfoService;
+    private readonly IAddressService _addressService;
     
     private readonly IUserService _userService;
 
@@ -23,14 +23,14 @@ public class InformationController : ControllerBase
                                 // ILoggerFactory loggerFactory,
                                 // ILogger logger,
                                  IPersonalInfoService personalInfoService,
-                                 IResidenceInfoService residenceInfoService,
+                                 IAddressService addressService,
                                  // do i need this???
                                  IUserService userService)
     {
         // _loggerFactory = loggerFactory;
         // _logger = logger;
         _personalInfoService = personalInfoService;
-        _residenceInfoService = residenceInfoService;
+        _addressService = addressService;
         _userService = userService;
     }
 

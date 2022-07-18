@@ -9,12 +9,12 @@ namespace ExamApi.BusinessLogic;
 public class PersonalInfoService : IPersonalInfoService
 {
     private readonly IPersonalInfoRepository _personalInfoRepo;
-    private readonly IResidenceInfoService _residenceInfoService;
+    private readonly IAddressService _addressService;
 
-    public PersonalInfoService(IPersonalInfoRepository personalInfoRepo, IResidenceInfoService residenceInfoService)
+    public PersonalInfoService(IPersonalInfoRepository personalInfoRepo, IAddressService addressService)
     {
         _personalInfoRepo = personalInfoRepo;
-        _residenceInfoService = residenceInfoService;
+        _addressService = addressService;
     }
 
     public PersonalInfo AddInfo(Guid userId, PersonalInfoDto personalInfoDto)
@@ -29,13 +29,13 @@ public class PersonalInfoService : IPersonalInfoService
             PersonalNumber = personalInfoDto.PersonalNumber,
             Email = personalInfoDto.Email,
             Photo = ImageConverter.ConvertImage(personalInfoDto.ImageUpload),
-            ResidenceInfo = new ResidenceInfo()
+            Address = new Address()
             {
                 Id = Guid.NewGuid(),
-                City = personalInfoDto.ResidenceInfo.City,
-                Street = personalInfoDto.ResidenceInfo.Street,
-                House = personalInfoDto.ResidenceInfo.House,
-                Flat = personalInfoDto.ResidenceInfo.Flat,
+                City = personalInfoDto.Address.City,
+                Street = personalInfoDto.Address.Street,
+                House = personalInfoDto.Address.House,
+                Flat = personalInfoDto.Address.Flat,
             }
         };
         if (_personalInfoRepo.AddInfo(personalInfo))
