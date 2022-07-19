@@ -40,20 +40,33 @@ public class InformationController : ControllerBase
         return Created(new Uri(Request.GetEncodedUrl() + "/" + createdEntry.Id), result);        
     }
 
-    [HttpGet("{id}")]
-    public ActionResult<PersonalInfoDto> GetInfo(Guid id)
+    [HttpGet("{userId}")]
+    public ActionResult<PersonalInfoDto> GetInfo(Guid userId)
     {
-        if (!_personalInfoService.GetInfo(id, out var result))
+        if (!_personalInfoService.GetInfo(userId, out var result))
             return NotFound();
         return Ok(result);
     }
 
-    [HttpPatch("{id}/firstName")]
-    public ActionResult UpdateFirstName(Guid id, [FromBody] string name)
+    [Authorize]
+    [HttpPatch("firstName")]
+    public ActionResult UpdateFirstName([FromBody] string name)
     {
+        var userId = _userService.GetUser(this.User.Identity.Name).Id;
         if (String.IsNullOrWhiteSpace(name))
             return BadRequest();
-        _personalInfoService.UpdateFirstName(id, name);
+        _personalInfoService.UpdateProperty<string>(userId, "FirstName", name);
+        return NoContent();
+    }
+
+    [Authorize]
+    [HttpPatch("personalNumber")]
+    public ActionResult UpdateLastName([FromBody] ulong personalNo)
+    {
+        var userId = _userService.GetUser(this.User.Identity.Name).Id;
+        if (personalNo.ToString().Length != 11)
+            return BadRequest();
+        _personalInfoService.UpdateProperty<ulong>(userId, "PersonalNumber", personalNo);
         return NoContent();
     }
 }

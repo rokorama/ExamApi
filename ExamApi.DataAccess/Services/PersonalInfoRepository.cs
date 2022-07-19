@@ -38,17 +38,21 @@ public class PersonalInfoRepository : IPersonalInfoRepository
         throw new NotImplementedException();
     }
 
-    public PersonalInfo GetInfo(Guid infoId)
+    public PersonalInfo GetInfo(Guid userId)
     {
-        return _dbContext.PersonalInfos.Include(pi => pi.Address)
-                                       .SingleOrDefault(i => i.Id == infoId);
+        return _dbContext.Users.Include(u => u.PersonalInfo)
+                               .Include(u => u.PersonalInfo.Address)
+                               .SingleOrDefault(i => i.Id == userId)
+                               .PersonalInfo;
     }
 
-    public bool EditFirstName(Guid userId, string newFirstName)
+    public bool UpdateInfo(Guid userId, PersonalInfo updatedEntry)
     {
-         var entryToUpdate = _dbContext.Users.Include(u => u.PersonalInfo)
-                                             .SingleOrDefault(u => u.Id == userId);
-        entryToUpdate.PersonalInfo.FirstName = newFirstName;
+        
+        var entryToUpdate = _dbContext.Users.Include(u => u.PersonalInfo)
+                                            .SingleOrDefault(u => u.Id == userId)
+                                            .PersonalInfo;
+        entryToUpdate = updatedEntry;
         _dbContext.Entry(entryToUpdate).State = Microsoft.EntityFrameworkCore.EntityState.Modified; 
 
         var result = _dbContext.SaveChanges();

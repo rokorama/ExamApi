@@ -51,10 +51,10 @@ public class PersonalInfoService : IPersonalInfoService
         return true;
     }
 
-    public bool UpdateFirstName(Guid userId, string newFirstName)
+    public bool UpdateProperty<T>(Guid userId, string propertyName, T newValue)
     {
-        if (!_personalInfoRepo.EditFirstName(userId, newFirstName))
-            return false;
-        return true;
+        var entry = _personalInfoRepo.GetInfo(userId);
+        PropertyChanger.UpdateProperty<T>(entry, propertyName, newValue);
+        return _personalInfoRepo.UpdateInfo(userId, entry);
     }
 }
