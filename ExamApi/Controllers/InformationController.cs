@@ -22,8 +22,6 @@ public class InformationController : ControllerBase
                                  // do i need this???
                                  IUserService userService)
     {
-        // _loggerFactory = loggerFactory;
-        // _logger = logger;
         _personalInfoService = personalInfoService;
         _addressService = addressService;
         _userService = userService;
@@ -34,7 +32,10 @@ public class InformationController : ControllerBase
     public ActionResult<PersonalInfoDto> AddPersonalInfo([FromForm] PersonalInfoUploadRequest uploadRequest)
     {
         var userId = _userService.GetUser(this.User.Identity.Name).Id;
-        var createdEntry = _personalInfoService.AddInfo(uploadRequest, userId);
+        if (!_personalInfoService.AddInfo(uploadRequest, userId, out PersonalInfo createdEntry))
+        {
+            return BadRequest(); // details would be nice here
+        }
         var result = ObjectMapper.MapPersonalInfoDto(createdEntry);
         return Created(new Uri(Request.GetEncodedUrl() + "/" + createdEntry.Id), result);        
     }
@@ -45,5 +46,14 @@ public class InformationController : ControllerBase
         if (!_personalInfoService.GetInfo(id, out var result))
             return NotFound();
         return Ok(result);
+    }
+
+    [HttpPatch("{id}/firstName")]
+    public ActionResult UpdateFirstName(Guid id, [FromBody] string name)
+    {
+        if (String.IsNullOrWhiteSpace(name))
+            return BadRequest();
+        _personalInfoService.UpdateFirstName(id, name);
+        return NoContent();
     }
 }

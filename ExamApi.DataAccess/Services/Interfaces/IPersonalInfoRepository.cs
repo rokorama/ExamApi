@@ -8,4 +8,5 @@ public interface IPersonalInfoRepository
     public bool AddInfo(PersonalInfo personalInfo, Guid userId);
     public bool EditInfo(Guid userId, User user);
     // public bool DeleteInfo(User user);
+    public bool EditFirstName(Guid id, string newFirstName);
 }

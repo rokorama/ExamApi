@@ -16,7 +16,6 @@ public class AddressService : IAddressService
     {
         var entry = new Address()
         {
-            Id = Guid.NewGuid(),
             City = addressDto.City,
             Street = addressDto.Street,
             House = addressDto.House,

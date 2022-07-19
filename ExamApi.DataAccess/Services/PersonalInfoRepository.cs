@@ -40,8 +40,18 @@ public class PersonalInfoRepository : IPersonalInfoRepository
 
     public PersonalInfo GetInfo(Guid infoId)
     {
-        // return _dbContext.PersonalInfos.SingleOrDefault(i => i.Id == userId);
         return _dbContext.PersonalInfos.Include(pi => pi.Address)
                                        .SingleOrDefault(i => i.Id == infoId);
+    }
+
+    public bool EditFirstName(Guid userId, string newFirstName)
+    {
+         var entryToUpdate = _dbContext.Users.Include(u => u.PersonalInfo)
+                                             .SingleOrDefault(u => u.Id == userId);
+        entryToUpdate.PersonalInfo.FirstName = newFirstName;
+        _dbContext.Entry(entryToUpdate).State = Microsoft.EntityFrameworkCore.EntityState.Modified; 
+
+        var result = _dbContext.SaveChanges();
+        return result > 0;
     }
 }

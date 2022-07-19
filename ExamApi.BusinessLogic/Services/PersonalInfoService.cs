@@ -17,16 +17,18 @@ public class PersonalInfoService : IPersonalInfoService
         _addressService = addressService;
     }
 
-    public PersonalInfo AddInfo(PersonalInfoUploadRequest uploadRequest, Guid userId)
+    public bool AddInfo(PersonalInfoUploadRequest uploadRequest, Guid userId, out PersonalInfo result)
     {
         // if (_personalInfoRepo.GetInfo(userId) != null)
         //     throw new Exception($"There are existing data associated with this user");
-        var personalInfo = ObjectMapper.MapPersonalInfoUpload(uploadRequest);
-        if (_personalInfoRepo.AddInfo(personalInfo, userId))
-            return personalInfo;
-        // handle this
-        else
-            throw new Exception("The information could not be added, please try again");
+        result = ObjectMapper.MapPersonalInfoUpload(uploadRequest);
+        if (!_personalInfoRepo.AddInfo(result, userId))
+        {
+            result = null;
+            return false;
+
+        }
+        return true;
     }
 
     public bool GetInfo(Guid userId)
@@ -46,6 +48,13 @@ public class PersonalInfoService : IPersonalInfoService
             return false;
         }
         result = ObjectMapper.MapPersonalInfoDto(entry);
+        return true;
+    }
+
+    public bool UpdateFirstName(Guid userId, string newFirstName)
+    {
+        if (!_personalInfoRepo.EditFirstName(userId, newFirstName))
+            return false;
         return true;
     }
 }
