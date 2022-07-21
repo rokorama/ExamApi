@@ -13,17 +13,14 @@ namespace ExamApi.Controllers;
 public class InformationController : ControllerBase
 {
     private readonly IPersonalInfoService _personalInfoService;
-    private readonly IAddressService _addressService;
     
     private readonly IUserService _userService;
 
     public InformationController(
                                  IPersonalInfoService personalInfoService,
-                                 IAddressService addressService,
                                  IUserService userService)
     {
         _personalInfoService = personalInfoService;
-        _addressService = addressService;
         _userService = userService;
     }
 
