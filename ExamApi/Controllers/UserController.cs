@@ -12,11 +12,13 @@ public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger;
     private readonly IUserService _userService;
+    private readonly ILoginService _loginService;
 
-    public UserController(ILogger<UserController> logger, IUserService userService)
+    public UserController(IUserService userService,
+                          ILoginService loginService)
     {
-        _logger = logger;
         _userService = userService;
+        _loginService = loginService;
     }
 
     // placeholder, for now
@@ -32,7 +34,7 @@ public class UserController : ControllerBase
     [HttpPost("signup")]
     public ActionResult<User> Signup([FromForm] UserDto userDto)
     {
-        var newUser = _userService.CreateUser(userDto.Username, userDto.Password);
+        var newUser = _loginService.CreateUser(userDto.Username, userDto.Password);
         if (newUser == null)
             return BadRequest();
         return Created(new Uri(Request.GetEncodedUrl() + "/" + newUser.Id), newUser);
@@ -43,7 +45,7 @@ public class UserController : ControllerBase
     {
         try
         {
-            return _userService.Login(userDto.Username, userDto.Password);
+            return _loginService.Login(userDto.Username, userDto.Password);
         }
         catch (Exception)
         {

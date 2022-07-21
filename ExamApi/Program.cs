@@ -13,6 +13,7 @@ string connString = builder.Configuration.GetConnectionString("Database");
 builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(connString));
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPersonalInfoRepository, PersonalInfoRepository>();
