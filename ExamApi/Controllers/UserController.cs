@@ -1,5 +1,6 @@
 using ExamApi.Models;
 using ExamApi.UserAccess;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -48,5 +49,14 @@ public class UserController : ControllerBase
         {
             return BadRequest("Invalid credentials");
         }
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("{userId}")]
+    public ActionResult<bool> DeleteUser([FromRoute] Guid userId)
+    {
+        if (!_userService.DeleteUser(userId))
+            return BadRequest();
+        return NoContent();
     }
 }

@@ -32,13 +32,12 @@ public class UserRepository : IUserRepository
             return null;
     }
 
-    public bool GrantAdminRights(User user)
+    public bool DeleteUser(Guid userId)
     {
-        throw new NotImplementedException();
-    }
+        var userToRemove = _dbContext.Users.Find(userId);
+        _dbContext.Users.Remove(userToRemove);
+        var result = _dbContext.SaveChanges();
 
-    public bool RevokeUserRights(User user)
-    {
-        throw new NotImplementedException();
+        return result > 0;
     }
 }

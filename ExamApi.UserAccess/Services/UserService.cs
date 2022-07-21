@@ -60,13 +60,8 @@ public class UserService : IUserService
         return BCrypt.Net.BCrypt.Verify(password, storedHash);
     }
 
-    public bool GrantAdminRights(string username)
+    public bool DeleteUser(Guid userId)
     {
-        throw new NotImplementedException();
-    }
-
-    public bool RevokeUserRights(string username)
-    {
-        throw new NotImplementedException();
+        return _userRepo.DeleteUser(userId);
     }
 }

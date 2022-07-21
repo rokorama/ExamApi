@@ -9,6 +9,6 @@ public interface IUserService
     public User GetUser(string username);
     public User GetUser(Guid id);
     public Guid GetUserId(string username);
-    public bool GrantAdminRights(string username);
-    public bool RevokeUserRights(string username);
+    public bool DeleteUser(Guid userId);
+
 }
