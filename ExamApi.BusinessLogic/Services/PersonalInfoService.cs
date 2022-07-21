@@ -6,12 +6,10 @@ namespace ExamApi.BusinessLogic;
 public class PersonalInfoService : IPersonalInfoService
 {
     private readonly IPersonalInfoRepository _personalInfoRepo;
-    private readonly IAddressService _addressService;
 
-    public PersonalInfoService(IPersonalInfoRepository personalInfoRepo, IAddressService addressService)
+    public PersonalInfoService(IPersonalInfoRepository personalInfoRepo)
     {
         _personalInfoRepo = personalInfoRepo;
-        _addressService = addressService;
     }
 
     public bool AddInfo(PersonalInfoUploadRequest uploadRequest, Guid userId, out PersonalInfo result)
