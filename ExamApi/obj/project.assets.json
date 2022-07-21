@@ -769,8 +769,7 @@
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
           "ExamApi.DataAccess": "1.0.0",
-          "ExamApi.Models": "1.0.0",
-          "SixLabors.ImageSharp": "2.1.3"
+          "ExamApi.Models": "1.0.0"
         },
         "compile": {
           "bin/placeholder/ExamApi.BusinessLogic.dll": {}
@@ -786,7 +785,8 @@
           "ExamApi.Models": "1.0.0",
           "Microsoft.EntityFrameworkCore": "6.0.6",
           "Microsoft.EntityFrameworkCore.SqlServer": "6.0.6",
-          "Microsoft.EntityFrameworkCore.Tools": "6.0.6"
+          "Microsoft.EntityFrameworkCore.Tools": "6.0.6",
+          "SixLabors.ImageSharp": "2.1.3"
         },
         "compile": {
           "bin/placeholder/ExamApi.DataAccess.dll": {}

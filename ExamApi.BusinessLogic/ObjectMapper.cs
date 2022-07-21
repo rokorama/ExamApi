@@ -1,6 +1,7 @@
+using ExamApi.Models;
 using Microsoft.AspNetCore.Http;
 
-namespace ExamApi.Models;
+namespace ExamApi.DataAccess;
 
 public static class ObjectMapper
 {

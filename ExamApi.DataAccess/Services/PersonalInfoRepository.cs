@@ -58,4 +58,12 @@ public class PersonalInfoRepository : IPersonalInfoRepository
         var result = _dbContext.SaveChanges();
         return result > 0;
     }
+
+    public bool CheckForExistingInfo(Guid userId)
+    {
+        var personalInfo = _dbContext.Users.Include(u => u.PersonalInfo)
+                                            .SingleOrDefault(u => u.Id == userId)
+                                            .PersonalInfo;
+        return (personalInfo != null);
+    }
 }

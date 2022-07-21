@@ -1,8 +1,5 @@
 using ExamApi.DataAccess;
 using ExamApi.Models;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Jpeg;
-using SixLabors.ImageSharp.Processing;
 
 namespace ExamApi.BusinessLogic;
 
@@ -19,8 +16,8 @@ public class PersonalInfoService : IPersonalInfoService
 
     public bool AddInfo(PersonalInfoUploadRequest uploadRequest, Guid userId, out PersonalInfo result)
     {
-        // if (_personalInfoRepo.GetInfo(userId) != null)
-        //     throw new Exception($"There are existing data associated with this user");
+        if (!_personalInfoRepo.CheckForExistingInfo(userId))
+            throw new Exception($"There are existing data associated with this user");
         result = ObjectMapper.MapPersonalInfoUpload(uploadRequest);
         if (!_personalInfoRepo.AddInfo(result, userId))
         {
@@ -28,14 +25,6 @@ public class PersonalInfoService : IPersonalInfoService
             return false;
 
         }
-        return true;
-    }
-
-    public bool GetInfo(Guid userId)
-    {
-        var result = _personalInfoRepo.GetInfo(userId);
-        if (result == null)
-            return false;
         return true;
     }
 
@@ -51,10 +40,17 @@ public class PersonalInfoService : IPersonalInfoService
         return true;
     }
 
-    public bool UpdateProperty<T>(Guid userId, string propertyName, T newValue)
+    public bool UpdatePersonalInfo<T>(Guid userId, string propertyName, T newValue)
     {
         var entry = _personalInfoRepo.GetInfo(userId);
-        PropertyChanger.UpdateProperty<T>(entry, propertyName, newValue);
+        PropertyChanger.UpdatePersonalInfo<T>(entry, propertyName, newValue);
+        return _personalInfoRepo.UpdateInfo(userId, entry);
+    }
+
+    public bool UpdateAddress<T>(Guid userId, string propertyName, T newValue)
+    {
+        var entry = _personalInfoRepo.GetInfo(userId);
+        PropertyChanger.UpdateAddress<T>(entry.Address, propertyName, newValue);
         return _personalInfoRepo.UpdateInfo(userId, entry);
     }
 }

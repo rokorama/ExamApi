@@ -1,8 +1,9 @@
+using ExamApi.Models;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Processing;
 
-namespace ExamApi.Models;
+namespace ExamApi.DataAccess;
 
 public static class ImageConverter
 {    
