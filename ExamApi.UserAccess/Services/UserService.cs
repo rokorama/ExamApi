@@ -19,7 +19,6 @@ public class UserService : IUserService
         CreatePassword(password, out string passwordHash);
         var user = new User()
         {
-            // Id = Guid.NewGuid(),
             Username = username,
             Password = passwordHash,
             Role = "User",
