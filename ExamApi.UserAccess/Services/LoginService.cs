@@ -22,7 +22,13 @@ public class LoginService : ILoginService
             Password = passwordHash,
             Role = "User",
         };
-        return _userRepo.AddNewUser(user);
+        if (_userRepo.AddNewUser(user))
+            return user;
+        //TODO - handle this
+        else
+        {
+            throw new Exception();
+        }
     }
 
     public string Login(string username, string password)

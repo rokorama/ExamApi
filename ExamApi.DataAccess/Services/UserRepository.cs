@@ -23,13 +23,10 @@ public class UserRepository : IUserRepository
     }
 
     // no nulls please
-    public User AddNewUser(User user)
+    public bool AddNewUser(User user)
     {
         _dbContext.Users.Add(user);
-        if (_dbContext.SaveChanges() > 0)
-            return user;
-        else
-            return null;
+        return _dbContext.SaveChanges() > 0;
     }
 
     public bool DeleteUser(Guid userId)
