@@ -36,6 +36,9 @@ public class UserController : ControllerBase
     [HttpPost("signup")]
     public ActionResult<User> Signup([FromForm] UserDto userDto)
     {
+        // move this check somewhere?
+        if (_userService.GetUser(userDto.Username) != null)
+            return BadRequest($"This username is taken, please try another.");
         var newUser = _loginService.CreateUser(userDto.Username, userDto.Password);
         if (newUser == null)
             return BadRequest();
