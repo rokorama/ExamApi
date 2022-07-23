@@ -132,8 +132,8 @@ public class InformationController : ControllerBase
     public ActionResult UpdateFlat([FromBody (EmptyBodyBehavior = EmptyBodyBehavior.Allow)] int? flat = null)
     {
         var user = _userService.GetUser(this.User.Identity.Name).Id;
-        // add checks for null personalinfo
-        _addressService.UpdateAddress<int?>(user, "Flat", flat);
+        if (!_addressService.UpdateAddress<int?>(user, "Flat", flat))
+            return BadRequest();
         return NoContent();
     }
 }

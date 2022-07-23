@@ -71,11 +71,27 @@ public class PersonalInfoRepository : IPersonalInfoRepository
         }
     }
 
-    public bool CheckForExistingInfo(Guid userId)
+    public bool CheckForExistingPersonalInfo(Guid userId)
     {
         var personalInfo = _dbContext.Users.Include(u => u.PersonalInfo)
                                             .SingleOrDefault(u => u.Id == userId)
                                             .PersonalInfo;
         return (personalInfo != null);
+    }
+
+    public bool CheckForExistingAddress(Guid userId)
+    {
+        try
+        {
+            var address = _dbContext.Users.Include(u => u.PersonalInfo)
+                                          .SingleOrDefault(u => u.Id == userId)
+                                          .PersonalInfo
+                                          .Address;
+            return true;
+        }
+        catch (NullReferenceException)
+        {
+            return false;
+        }
     }
 }
