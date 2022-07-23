@@ -1,7 +1,7 @@
 using ExamApi.Models.Attributes;
 using Microsoft.AspNetCore.Http;
 
-namespace ExamApi.Models;
+namespace ExamApi.Models.UploadRequests;
 
 public class ImageUploadRequest
 {

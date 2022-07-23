@@ -1,6 +1,8 @@
 using ExamApi.BusinessLogic;
-using ExamApi.DataAccess;
+using ExamApi.BusinessLogic.Helpers;
 using ExamApi.Models;
+using ExamApi.Models.DTOs;
+using ExamApi.Models.UploadRequests;
 using ExamApi.UserAccess;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;

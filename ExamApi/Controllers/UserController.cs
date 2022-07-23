@@ -1,4 +1,5 @@
 using ExamApi.Models;
+using ExamApi.Models.DTOs;
 using ExamApi.UserAccess;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;

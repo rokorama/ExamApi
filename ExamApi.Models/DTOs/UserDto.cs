@@ -1,4 +1,4 @@
-namespace ExamApi.Models;
+namespace ExamApi.Models.DTOs;
 
 public class UserDto
 {

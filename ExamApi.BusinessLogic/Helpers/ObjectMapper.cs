@@ -1,7 +1,8 @@
 using ExamApi.Models;
-using Microsoft.AspNetCore.Http;
+using ExamApi.Models.DTOs;
+using ExamApi.Models.UploadRequests;
 
-namespace ExamApi.DataAccess;
+namespace ExamApi.BusinessLogic.Helpers;
 
 public static class ObjectMapper
 {

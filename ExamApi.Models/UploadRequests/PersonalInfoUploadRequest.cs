@@ -1,4 +1,6 @@
-namespace ExamApi.Models;
+using ExamApi.Models.DTOs;
+
+namespace ExamApi.Models.UploadRequests;
 
 public class PersonalInfoUploadRequest
 {

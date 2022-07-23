@@ -1,4 +1,6 @@
 using ExamApi.Models;
+using ExamApi.Models.DTOs;
+using ExamApi.Models.UploadRequests;
 
 namespace ExamApi.BusinessLogic;
 
