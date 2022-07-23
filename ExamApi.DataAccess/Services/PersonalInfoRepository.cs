@@ -1,15 +1,19 @@
+using System;
 using ExamApi.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace ExamApi.DataAccess;
 
 public class PersonalInfoRepository : IPersonalInfoRepository
 {
     private readonly AppDbContext _dbContext;
+    private readonly ILogger<PersonalInfoRepository> _logger;
 
-    public PersonalInfoRepository(AppDbContext dbContext)
+    public PersonalInfoRepository(AppDbContext dbContext, ILogger<PersonalInfoRepository> logger)
     {
         _dbContext = dbContext;
+        _logger = logger;
     }
 
     public bool AddInfo(PersonalInfo personalInfo, Guid userId)
@@ -54,9 +58,17 @@ public class PersonalInfoRepository : IPersonalInfoRepository
                                             .PersonalInfo;
         entryToUpdate = updatedEntry;
         _dbContext.Entry(entryToUpdate).State = Microsoft.EntityFrameworkCore.EntityState.Modified; 
-
-        var result = _dbContext.SaveChanges();
-        return result > 0;
+        try
+        {
+            _dbContext.SaveChanges();
+            _logger.LogInformation($"Personal information entry {updatedEntry.Id} updated at {DateTime.UtcNow}.");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Failed to update personal info entry {updatedEntry.Id} at {DateTime.UtcNow}.", ex);
+            return false;
+        }
     }
 
     public bool CheckForExistingInfo(Guid userId)

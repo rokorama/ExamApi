@@ -22,7 +22,9 @@ public class UserRepository : IUserRepository
 
     public User GetUser(Guid userId)
     {
-        return _dbContext.Users.Include(u => u.PersonalInfo).SingleOrDefault(i => i.Id == userId);
+        return _dbContext.Users.Include(u => u.PersonalInfo)
+                               .Include(u => u.PersonalInfo.Address)
+                               .SingleOrDefault(i => i.Id == userId);
     }
 
     public bool AddNewUser(User user)
@@ -31,7 +33,7 @@ public class UserRepository : IUserRepository
         try
         {
             _dbContext.SaveChanges();
-            _logger.LogInformation($"New user {user.Username} created at {DateTime.UtcNow}");
+            _logger.LogInformation($"New user {user.Username} created at {DateTime.UtcNow}.");
             return true;
         }
         catch (Exception ex)
