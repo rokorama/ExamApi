@@ -38,17 +38,10 @@ public class PersonalInfoService : IPersonalInfoService
         return true;
     }
 
-    public bool UpdatePersonalInfo<T>(Guid userId, string propertyName, T newValue)
+    public bool UpdateInfo<T>(Guid userId, string propertyName, T newValue)
     {
         var entry = _personalInfoRepo.GetInfo(userId);
         PropertyChanger.UpdatePersonalInfo<T>(entry, propertyName, newValue);
-        return _personalInfoRepo.UpdateInfo(userId, entry);
-    }
-
-    public bool UpdateAddress<T>(Guid userId, string propertyName, T newValue)
-    {
-        var entry = _personalInfoRepo.GetInfo(userId);
-        PropertyChanger.UpdateAddress<T>(entry.Address, propertyName, newValue);
         return _personalInfoRepo.UpdateInfo(userId, entry);
     }
 }
