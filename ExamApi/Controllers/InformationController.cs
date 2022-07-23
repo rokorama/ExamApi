@@ -33,7 +33,7 @@ public class InformationController : ControllerBase
         var userId = _userService.GetUser(this.User.Identity.Name).Id;
         if (!_personalInfoService.AddInfo(uploadRequest, userId, out PersonalInfo createdEntry))
         {
-            return BadRequest(); // details would be nice here
+            return BadRequest($"One or more values are invalid.");
         }
         var result = ObjectMapper.MapPersonalInfoDto(createdEntry);
         return Created(new Uri(Request.GetEncodedUrl() + "/" + createdEntry.Id), result);        
@@ -53,7 +53,7 @@ public class InformationController : ControllerBase
     {
         var userId = _userService.GetUser(this.User.Identity.Name).Id;
         if (String.IsNullOrWhiteSpace(name))
-            return BadRequest();
+            return BadRequest($"New value cannot be empty.");
         _personalInfoService.UpdatePersonalInfo<string>(userId, "FirstName", name);
         return NoContent();
     }
@@ -64,7 +64,7 @@ public class InformationController : ControllerBase
     {
         var user = _userService.GetUser(this.User.Identity.Name).Id;
         if (personalNo.ToString().Length != 11)
-            return BadRequest();
+            return BadRequest($"Invalid personal number format");
         _personalInfoService.UpdatePersonalInfo<ulong>(user, "PersonalNumber", personalNo);
         return NoContent();
     }
@@ -74,8 +74,8 @@ public class InformationController : ControllerBase
     public ActionResult UpdateEmail([FromBody] string email)
     {
         var user = _userService.GetUser(this.User.Identity.Name).Id;
-        if (email.ToString().Length != 11)
-            return BadRequest();
+        if (String.IsNullOrWhiteSpace(email))
+            return BadRequest($"New value cannot be empty.");
         _personalInfoService.UpdatePersonalInfo<string>(user, "Email", email);
         return NoContent();
     }
@@ -96,7 +96,7 @@ public class InformationController : ControllerBase
     {
         var user = _userService.GetUser(this.User.Identity.Name).Id;
         if (String.IsNullOrWhiteSpace(city))
-            return BadRequest();
+            return BadRequest($"New value cannot be empty.");
         _personalInfoService.UpdateAddress<string>(user, "City", city);
         return NoContent();
     }
@@ -107,7 +107,7 @@ public class InformationController : ControllerBase
     {
         var user = _userService.GetUser(this.User.Identity.Name).Id;
         if (String.IsNullOrWhiteSpace(street))
-            return BadRequest();
+            return BadRequest($"New value cannot be empty.");
         _personalInfoService.UpdateAddress<string>(user, "Street", street);
         return NoContent();
     }
@@ -118,7 +118,7 @@ public class InformationController : ControllerBase
     {
         var user = _userService.GetUser(this.User.Identity.Name).Id;
         if (String.IsNullOrWhiteSpace(house))
-            return BadRequest();
+            return BadRequest($"New value cannot be empty.");
         _personalInfoService.UpdateAddress<string>(user, "House", house);
         return NoContent();
     }
@@ -128,8 +128,6 @@ public class InformationController : ControllerBase
     public ActionResult UpdateFlat([FromBody] int flat)
     {
         var user = _userService.GetUser(this.User.Identity.Name).Id;
-        if (String.IsNullOrWhiteSpace(flat.ToString()))
-            return BadRequest();
         _personalInfoService.UpdateAddress<int>(user, "Flat", flat);
         return NoContent();
     }
