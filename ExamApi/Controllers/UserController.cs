@@ -23,7 +23,6 @@ public class UserController : ControllerBase
         _logger = logger;
     }
 
-    // placeholder, for now
     [HttpGet("{id}")]
     public ActionResult<User> GetUser([FromRoute] Guid id)
     {
