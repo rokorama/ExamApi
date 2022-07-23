@@ -17,7 +17,9 @@ public class UserRepository : IUserRepository
 
     public User GetUser(string username)
     {
-        return _dbContext.Users.FirstOrDefault(x => x.Username == username);
+        return _dbContext.Users.Include(u => u.PersonalInfo)
+                               .Include(u => u.PersonalInfo.Address)
+                               .SingleOrDefault(u => u.Username == username);
     }
 
     public User GetUser(Guid userId)

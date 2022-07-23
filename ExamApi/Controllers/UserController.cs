@@ -39,7 +39,7 @@ public class UserController : ControllerBase
         var newUser = _loginService.CreateUser(userDto.Username, userDto.Password);
         if (newUser == null)
             return BadRequest();
-        _logger.LogInformation($"New user {newUser.Id} created at {DateTime.Now.ToString()}");
+        _logger.LogInformation($"New user {newUser.Id} created at {DateTime.Now}");
         return Created(new Uri(Request.GetEncodedUrl() + "/" + newUser.Id), newUser);
     }
 
@@ -48,10 +48,13 @@ public class UserController : ControllerBase
     {
         try
         {
-            return _loginService.Login(userDto.Username, userDto.Password);
+            var token = _loginService.Login(userDto.Username, userDto.Password);
+            _logger.LogInformation($"User {userDto.Username} logged in at {DateTime.Now}");
+            return token;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogInformation($"Failed login for {userDto.Username} at {DateTime.Now}: {ex.Message}");
             return BadRequest("Invalid credentials");
         }
     }
@@ -62,7 +65,7 @@ public class UserController : ControllerBase
     {
         if (!_userService.DeleteUser(userId))
             return BadRequest();
-        _logger.LogInformation($"User {userId} was deleted by admin at {DateTime.Now.ToString()}");
+        _logger.LogInformation($"User {userId} was deleted by admin at {DateTime.Now}");
         return NoContent();
     }
 }

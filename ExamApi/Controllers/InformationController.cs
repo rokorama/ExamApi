@@ -5,6 +5,7 @@ using ExamApi.UserAccess;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace ExamApi.Controllers;
 
@@ -125,10 +126,11 @@ public class InformationController : ControllerBase
 
     [Authorize]
     [HttpPatch("flat")]
-    public ActionResult UpdateFlat([FromBody] int flat)
+    public ActionResult UpdateFlat([FromBody (EmptyBodyBehavior = EmptyBodyBehavior.Allow)] int? flat = null)
     {
         var user = _userService.GetUser(this.User.Identity.Name).Id;
-        _personalInfoService.UpdateAddress<int>(user, "Flat", flat);
+        // add checks for null personalinfo
+        _personalInfoService.UpdateAddress<int?>(user, "Flat", flat);
         return NoContent();
     }
 }
