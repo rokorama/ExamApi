@@ -18,8 +18,13 @@ public class PersonalInfoService : IPersonalInfoService
 
     public bool AddInfo(PersonalInfoUploadRequest uploadRequest, Guid userId, out PersonalInfo result)
     {
-        if (!_personalInfoRepo.CheckForExistingPersonalInfo(userId))
-            throw new Exception($"There are existing data associated with this user");
+        if (_personalInfoRepo.CheckForExistingPersonalInfo(userId))
+        {
+            // works, but returns error for invalid values
+            _logger.LogInformation($"User {userId} attempted to add duplicate personal info at {DateTime.Now}");
+            result = null;
+            return false;
+        }
         result = ObjectMapper.MapPersonalInfoUpload(uploadRequest);
         if (!_personalInfoRepo.AddInfo(result, userId))
         {

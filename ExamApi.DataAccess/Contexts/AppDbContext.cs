@@ -12,12 +12,15 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
-    // Configure Student & StudentAddress entity
     modelBuilder.Entity<User>()
-                .HasOne(u => u.PersonalInfo);
+                .HasOne(u => u.PersonalInfo)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
 
     modelBuilder.Entity<PersonalInfo>()
-                .HasOne(pi => pi.Address);
+                .HasOne(pi => pi.Address)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
 }
 
     public DbSet<User> Users { get; set; }

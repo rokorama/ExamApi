@@ -47,10 +47,14 @@ public class UserRepository : IUserRepository
 
     public bool DeleteUser(Guid userId)
     {
-        var userToRemove = _dbContext.Users.Find(userId);
+        var userToRemove = _dbContext.Users.Include(u => u.PersonalInfo)
+                                           .Include(u => u.PersonalInfo.Address)
+                                           .First(u => u.Id == userId);
+        _dbContext.Addresses.Remove(userToRemove.PersonalInfo.Address);
+        _dbContext.PersonalInfos.Remove(userToRemove.PersonalInfo);
+        _dbContext.Users.Remove(userToRemove);
         try
         {
-            _dbContext.Users.Remove(userToRemove);
             _dbContext.SaveChanges();
             _logger.LogInformation($"User {userToRemove.Username} deleted at {DateTime.UtcNow}");
             return true;
