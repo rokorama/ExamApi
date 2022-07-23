@@ -23,7 +23,7 @@ public class PersonalInfoService : IPersonalInfoService
     {
         if (_personalInfoRepo.CheckForExistingPersonalInfo(userId))
         {
-            // works, but returns error for invalid values
+            // TODO - works, but returns error for invalid values
             _logger.LogInformation($"User {userId} attempted to add duplicate personal info at {DateTime.Now}");
             result = null;
             return false;

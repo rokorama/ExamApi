@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamApi.UserAccess", "ExamA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamApi.BusinessLogic", "ExamApi.BusinessLogic\ExamApi.BusinessLogic.csproj", "{4FED91BF-571A-45E0-BA49-6B0B273126A4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamApi.Tests", "ExamApi.Tests\ExamApi.Tests.csproj", "{A679C953-E1F3-47E8-894E-699741DADCE3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{4FED91BF-571A-45E0-BA49-6B0B273126A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FED91BF-571A-45E0-BA49-6B0B273126A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4FED91BF-571A-45E0-BA49-6B0B273126A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A679C953-E1F3-47E8-894E-699741DADCE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A679C953-E1F3-47E8-894E-699741DADCE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A679C953-E1F3-47E8-894E-699741DADCE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A679C953-E1F3-47E8-894E-699741DADCE3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
