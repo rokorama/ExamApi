@@ -23,6 +23,7 @@ public class UserController : ControllerBase
         _logger = logger;
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet("{id}")]
     public ActionResult<User> GetUser([FromRoute] Guid id)
     {

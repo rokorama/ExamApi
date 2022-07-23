@@ -14,7 +14,5 @@ public class PersonalInfo
     public byte[] Photo { get; set; }
 
     [ForeignKey("AddressId")]
-    // public virtual Guid AddressId { get; set; }
-
     public virtual Address Address { get; set; }
 }

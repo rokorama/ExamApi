@@ -15,7 +15,5 @@ public class User
     public string Role { get; set; }
 
     [ForeignKey("PersonalInfoId")]
-    // public virtual Guid PersonalInfoId { get; set; }
-    
     public virtual PersonalInfo PersonalInfo { get; set; }
 }
