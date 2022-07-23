@@ -35,7 +35,7 @@ public class LoginService : ILoginService
     {
         var user = _userRepo.GetUser(username);
         if (!VerifyPasswordHash(password, user.Password))
-            throw new Exception("Incorrect credentials");
+            throw new ArgumentException("Incorrect credentials");
         return _jwtService.GetJwtToken(user.Username, user.Role);
     }
 

@@ -15,16 +15,19 @@ public class UserController : ControllerBase
     private readonly ILoginService _loginService;
 
     public UserController(IUserService userService,
-                          ILoginService loginService)
+                          ILoginService loginService,
+                          ILogger<UserController> logger)
     {
         _userService = userService;
         _loginService = loginService;
+        _logger = logger;
     }
 
     // placeholder, for now
     [HttpGet("{id}")]
     public ActionResult<User> GetUser([FromRoute] Guid id)
     {
+        _logger.LogInformation($"Getting user info for user {id}");
         var result = _userService.GetUser(id);
         if (result == null)
             return NotFound();
@@ -37,6 +40,7 @@ public class UserController : ControllerBase
         var newUser = _loginService.CreateUser(userDto.Username, userDto.Password);
         if (newUser == null)
             return BadRequest();
+        _logger.LogInformation($"New user {newUser.Id} created at {DateTime.Now.ToString()}");
         return Created(new Uri(Request.GetEncodedUrl() + "/" + newUser.Id), newUser);
     }
 
@@ -59,6 +63,7 @@ public class UserController : ControllerBase
     {
         if (!_userService.DeleteUser(userId))
             return BadRequest();
+        _logger.LogInformation($"User {userId} was deleted by admin at {DateTime.Now.ToString()}");
         return NoContent();
     }
 }
