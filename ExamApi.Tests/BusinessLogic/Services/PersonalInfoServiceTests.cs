@@ -22,7 +22,7 @@ public class PersonalInfoServiceTests
     }
 
     [Fact]
-    public void GetUser_WorksCorrectly_WhenInputIsValid()
+    public void GetInfo_WorksCorrectly_WhenUserExists()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -47,4 +47,35 @@ public class PersonalInfoServiceTests
         // Assert
         Assert.Equal(mockPersonalInfoDto!.FirstName, personalInfoFirstName);
     }
+
+    // get info when info does not exist
+
+    [Fact]
+    public void GetInfo_WorksCorrectly_WhenUserIsNonexistent()
+    {
+        // Arrange
+        _repoMock.Setup(r => r.GetInfo(It.IsAny<Guid>())).Returns(value: null);
+
+        // Act
+        var mockPersonalInfoDto = _sut.GetInfo(It.IsAny<Guid>());
+        
+        // Assert
+        Assert.Null(mockPersonalInfoDto);
+    }
+
+    // AddInfo(PersonalInfoUploadRequest uploadRequest, Guid userId, out PersonalInfo? createdEntry);
+        // with valid info
+    [Fact]
+    public void AddInfo
+    // AddInfo(PersonalInfoUploadRequest uploadRequest, Guid userId, out PersonalInfo? createdEntry);
+        // with invalid info
+
+
+
+    // public bool UpdateInfo<T>(Guid userId, string propertyName, T newValue);
+        // with valid info
+    // public bool UpdateInfo<T>(Guid userId, string propertyName, T newValue);
+        // with invalid info
+    // public bool UpdateInfo<T>(Guid userId, string propertyName, T newValue);
+        // with no existing previous info
 }
