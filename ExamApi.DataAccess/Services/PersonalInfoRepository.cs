@@ -21,7 +21,7 @@ public class PersonalInfoRepository : IPersonalInfoRepository
         // var user = _dbContext.Users.Find(userId);
         // user.PersonalInfo = personalInfo;
         var dbEntry = _dbContext.Users.Find(userId);
-        dbEntry.PersonalInfo = personalInfo;
+        dbEntry!.PersonalInfo = personalInfo;
         _dbContext.Entry(dbEntry).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
         // _dbContext.PersonalInfos.Find(userId).
         var result = _dbContext.SaveChanges();
@@ -42,11 +42,11 @@ public class PersonalInfoRepository : IPersonalInfoRepository
         throw new NotImplementedException();
     }
 
-    public PersonalInfo GetInfo(Guid userId)
+    public PersonalInfo? GetInfo(Guid userId)
     {
         return _dbContext.Users.Include(u => u.PersonalInfo)
-                               .Include(u => u.PersonalInfo.Address)
-                               .SingleOrDefault(i => i.Id == userId)
+                               .Include(u => u.PersonalInfo!.Address)
+                               .SingleOrDefault(i => i.Id == userId)!
                                .PersonalInfo;
     }
 
@@ -54,7 +54,7 @@ public class PersonalInfoRepository : IPersonalInfoRepository
     {
         
         var entryToUpdate = _dbContext.Users.Include(u => u.PersonalInfo)
-                                            .SingleOrDefault(u => u.Id == userId)
+                                            .SingleOrDefault(u => u.Id == userId)!
                                             .PersonalInfo;
         entryToUpdate = updatedEntry;
         _dbContext.Entry(entryToUpdate).State = Microsoft.EntityFrameworkCore.EntityState.Modified; 
@@ -66,7 +66,7 @@ public class PersonalInfoRepository : IPersonalInfoRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Failed to update personal info entry {updatedEntry.Id} at {DateTime.UtcNow}.", ex);
+            _logger.LogError($"Failed to update personal info entry {updatedEntry.Id} at {DateTime.UtcNow}. {ex.Message}");
             return false;
         }
     }
@@ -74,7 +74,7 @@ public class PersonalInfoRepository : IPersonalInfoRepository
     public bool CheckForExistingPersonalInfo(Guid userId)
     {
         var personalInfo = _dbContext.Users.Include(u => u.PersonalInfo)
-                                            .SingleOrDefault(u => u.Id == userId)
+                                            .SingleOrDefault(u => u.Id == userId)!
                                             .PersonalInfo;
         return (personalInfo != null);
     }
@@ -84,8 +84,8 @@ public class PersonalInfoRepository : IPersonalInfoRepository
         try
         {
             var address = _dbContext.Users.Include(u => u.PersonalInfo)
-                                          .SingleOrDefault(u => u.Id == userId)
-                                          .PersonalInfo
+                                          .SingleOrDefault(u => u.Id == userId)!
+                                          .PersonalInfo!
                                           .Address;
             return true;
         }

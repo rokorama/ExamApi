@@ -11,9 +11,8 @@ public class MaxFileSizeAttribute : ValidationAttribute
         _maxFileSize = maxFileSize;
     }
 
-    protected override ValidationResult IsValid(
-        object value, ValidationContext validationContext
-    )
+    protected override ValidationResult IsValid(object? value,
+                                                ValidationContext validationContext)
     {
         if (value is IFormFile file)
         {
@@ -23,7 +22,7 @@ public class MaxFileSizeAttribute : ValidationAttribute
             }
         }
 
-        return ValidationResult.Success;
+        return ValidationResult.Success!;
     }
 
     public string GetErrorMessage()

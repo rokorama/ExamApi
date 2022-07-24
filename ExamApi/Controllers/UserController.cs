@@ -39,9 +39,9 @@ public class UserController : ControllerBase
     public ActionResult<User> Signup([FromForm] UserDto userDto)
     {
         // move this check somewhere?
-        if (_userService.GetUser(userDto.Username) != null)
+        if (_userService.GetUser(userDto.Username!) != null)
             return BadRequest($"This username is taken, please try another.");
-        var newUser = _loginService.CreateUser(userDto.Username, userDto.Password);
+        var newUser = _loginService.CreateUser(userDto.Username!, userDto.Password!);
         if (newUser == null)
             return BadRequest();
         _logger.LogInformation($"New user {newUser.Id} created at {DateTime.Now}");
@@ -53,7 +53,7 @@ public class UserController : ControllerBase
     {
         try
         {
-            var token = _loginService.Login(userDto.Username, userDto.Password);
+            var token = _loginService.Login(userDto.Username!, userDto.Password!);
             _logger.LogInformation($"User {userDto.Username} logged in at {DateTime.Now}");
             return token;
         }

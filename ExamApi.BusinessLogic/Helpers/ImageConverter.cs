@@ -10,7 +10,7 @@ public static class ImageConverter
     public static byte[] ConvertImage(ImageUploadRequest imageUploadRequest)
     {
         using var memoryStream = new MemoryStream();
-        imageUploadRequest.Image.CopyTo(memoryStream);
+        imageUploadRequest.Image!.CopyTo(memoryStream);
         return ResizeImage(memoryStream.ToArray());
     }
 

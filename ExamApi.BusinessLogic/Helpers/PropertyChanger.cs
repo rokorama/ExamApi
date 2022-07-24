@@ -8,16 +8,18 @@ public static class PropertyChanger
     public static object UpdatePersonalInfo<T>(PersonalInfo obj, string propertyToUpdate, T newValue)
     {
         Type t = obj.GetType();
-        PropertyInfo targetProperty = t.GetProperty(propertyToUpdate);
-        targetProperty.SetValue(obj, newValue);
+        PropertyInfo? targetProperty = t.GetProperty(propertyToUpdate);
+        // throw error if null
+        targetProperty!.SetValue(obj, newValue);
         return obj;
     }
 
     public static object UpdateAddress<T>(Address obj, string propertyToUpdate, T newValue)
     {
         Type t = obj.GetType();
-        PropertyInfo targetProperty = t.GetProperty(propertyToUpdate);
-        targetProperty.SetValue(obj, newValue);
+        PropertyInfo? targetProperty = t.GetProperty(propertyToUpdate);
+        // throw error if null
+        targetProperty!.SetValue(obj, newValue);
         return obj;
     }
 

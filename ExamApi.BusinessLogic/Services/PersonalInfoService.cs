@@ -19,11 +19,11 @@ public class PersonalInfoService : IPersonalInfoService
         _logger = logger;
     }
 
-    public bool AddInfo(PersonalInfoUploadRequest uploadRequest, Guid userId, out PersonalInfo result)
+    public bool AddInfo(PersonalInfoUploadRequest uploadRequest, Guid userId, out PersonalInfo? result)
     {
         if (_personalInfoRepo.CheckForExistingPersonalInfo(userId))
         {
-            // works, but returns error for invalid values
+            // TODO - works, but returns error for invalid values
             _logger.LogInformation($"User {userId} attempted to add duplicate personal info at {DateTime.Now}");
             result = null;
             return false;
@@ -38,22 +38,18 @@ public class PersonalInfoService : IPersonalInfoService
         return true;
     }
 
-    public bool GetInfo(Guid userId, out PersonalInfoDto result)
+    public PersonalInfoDto? GetInfo(Guid userId)
     {
         var entry = _personalInfoRepo.GetInfo(userId);
         if (entry == null)
-        {
-            result = null;
-            return false;
-        }
-        result = ObjectMapper.MapPersonalInfoDto(entry);
-        return true;
+            return null;
+        return ObjectMapper.MapPersonalInfoDto(entry);
     }
 
     public bool UpdateInfo<T>(Guid userId, string propertyName, T newValue)
     {
-        var entry = _personalInfoRepo.GetInfo(userId);
-        if (entry.Address == null)
+        PersonalInfo? entry = _personalInfoRepo.GetInfo(userId);
+        if (entry == null)
         {
             _logger.LogInformation($"Failed attempt to update non-existing personal info for user {userId}.");
             return false;
