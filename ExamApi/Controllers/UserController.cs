@@ -42,8 +42,6 @@ public class UserController : ControllerBase
         if (_userService.GetUser(userDto.Username!) != null)
             return BadRequest($"This username is taken, please try another.");
         var newUser = _loginService.CreateUser(userDto.Username!, userDto.Password!);
-        if (newUser == null)
-            return BadRequest();
         _logger.LogInformation($"New user {newUser.Id} created at {DateTime.Now}");
         return Created(new Uri(Request.GetEncodedUrl() + "/" + newUser.Id), newUser);
     }
@@ -70,7 +68,6 @@ public class UserController : ControllerBase
     {
         if (!_userService.DeleteUser(userId))
             return BadRequest();
-        _logger.LogInformation($"User {userId} was deleted by admin at {DateTime.Now}");
         return NoContent();
     }
 }

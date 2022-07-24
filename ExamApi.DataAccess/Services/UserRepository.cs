@@ -68,7 +68,7 @@ public class UserRepository : IUserRepository
             _logger.LogInformation($"User {userToRemove.Username} deleted at {DateTime.UtcNow}");
             return true;
         }
-        catch (Exception ex)
+        catch (DbUpdateException ex)
         {
             _logger.LogError($"Failed to delete user {userToRemove.Username} at {DateTime.UtcNow}.", ex);
             return false;
