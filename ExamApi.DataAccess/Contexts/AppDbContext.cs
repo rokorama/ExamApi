@@ -23,7 +23,7 @@ public class AppDbContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade);
 }
 
-    public DbSet<User> Users { get; set; }
-    public DbSet<PersonalInfo> PersonalInfos { get; set; }
-    public DbSet<Address> Addresses { get; set; }
+    public DbSet<User> Users => Set<User>();
+    public DbSet<PersonalInfo> PersonalInfos => Set<PersonalInfo>();
+    public DbSet<Address> Addresses => Set<Address>();
 }

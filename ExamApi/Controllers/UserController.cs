@@ -39,11 +39,9 @@ public class UserController : ControllerBase
     public ActionResult<User> Signup([FromForm] UserDto userDto)
     {
         // move this check somewhere?
-        if (_userService.GetUser(userDto.Username) != null)
+        if (_userService.GetUser(userDto.Username!) != null)
             return BadRequest($"This username is taken, please try another.");
-        var newUser = _loginService.CreateUser(userDto.Username, userDto.Password);
-        if (newUser == null)
-            return BadRequest();
+        var newUser = _loginService.CreateUser(userDto.Username!, userDto.Password!);
         _logger.LogInformation($"New user {newUser.Id} created at {DateTime.Now}");
         return Created(new Uri(Request.GetEncodedUrl() + "/" + newUser.Id), newUser);
     }
@@ -53,7 +51,7 @@ public class UserController : ControllerBase
     {
         try
         {
-            var token = _loginService.Login(userDto.Username, userDto.Password);
+            var token = _loginService.Login(userDto.Username!, userDto.Password!);
             _logger.LogInformation($"User {userDto.Username} logged in at {DateTime.Now}");
             return token;
         }
@@ -70,7 +68,6 @@ public class UserController : ControllerBase
     {
         if (!_userService.DeleteUser(userId))
             return BadRequest();
-        _logger.LogInformation($"User {userId} was deleted by admin at {DateTime.Now}");
         return NoContent();
     }
 }

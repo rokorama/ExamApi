@@ -28,7 +28,10 @@ public class PersonalInfoServiceTests
         var userId = Guid.NewGuid();
         var personalInfoId = Guid.NewGuid();
         var personalInfoFirstName = "Steve";
+<<<<<<< HEAD
         // ???
+=======
+>>>>>>> project-structure
         var personalInfo = new PersonalInfo()
         {
             Id = personalInfoId,
@@ -43,10 +46,43 @@ public class PersonalInfoServiceTests
 
         // Act
         var mockPersonalInfoDto = _sut.GetInfo(userId);
+<<<<<<< HEAD
         // var mockPersonalInfoDto = ObjectMapper.MapPersonalInfoDto(mockPersonalInfoDto);
         // Assert
 
         // Assert.Equal(mockPersonalInfo.Id, personalInfoId);
         Assert.Equal(mockPersonalInfoDto.FirstName, personalInfoFirstName);
+=======
+
+        // Assert
+        Assert.Equal(mockPersonalInfoDto!.FirstName, personalInfoFirstName);
+    }
+
+    [Fact]
+    public void GetUser_WorksCorrectly_WhenInputIsInvalid()
+    {
+        PersonalInfo? repoReturnValue = null;
+        // Arrange
+        var userId = Guid.NewGuid();
+        // var personalInfoId = Guid.NewGuid();
+        // var personalInfoFirstName = "Steve";
+        // var personalInfo = new PersonalInfo()
+        // {
+        //     Id = personalInfoId,
+        //     FirstName = personalInfoFirstName,
+        //     LastName = It.IsAny<String>(),  
+        //     PersonalNumber = It.IsAny<ulong>(),
+        //     Email = It.IsAny<String>(),
+        //     Photo = It.IsAny<byte[]>(),
+        //     Address = new Address()
+        // };
+        _repoMock.Setup(r => r.GetInfo(userId)).Returns(repoReturnValue);
+
+        // Act
+        var mockPersonalInfoDto = _sut.GetInfo(userId);
+
+        // Assert
+        Assert.Null(mockPersonalInfoDto);
+>>>>>>> project-structure
     }
 }

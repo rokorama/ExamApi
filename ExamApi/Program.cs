@@ -36,7 +36,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // Configure user authentication in Swagger
 builder.Services.AddSwaggerGen(c =>
 {
-   c.SwaggerDoc("v1", new() { Title = "NotesApp", Version = "v1" });
+   c.SwaggerDoc("v1", new() { Title = "ExamApp", Version = "v1" });
    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme {
     In = Microsoft.OpenApi.Models.ParameterLocation.Header,
     Description = "Please enter a valid token",

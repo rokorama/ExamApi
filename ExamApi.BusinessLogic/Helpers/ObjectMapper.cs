@@ -15,8 +15,8 @@ public static class ObjectMapper
             LastName = uploadRequest.LastName,
             PersonalNumber = uploadRequest.PersonalNumber,
             Email = uploadRequest.Email,
-            Photo = ImageConverter.ConvertImage(uploadRequest.ImageUpload),
-            Address = MapAddressEntity(uploadRequest.Address),
+            Photo = ImageConverter.ConvertImage(uploadRequest.ImageUpload!),
+            Address = MapAddressEntity(uploadRequest.Address!),
         };
     }
 
@@ -55,7 +55,7 @@ public static class ObjectMapper
             PersonalNumber = personalInfo.PersonalNumber,
             Email = personalInfo.Email,
             Photo = personalInfo.Photo,
-            Address = MapAddressDto(personalInfo.Address),
+            Address = MapAddressDto(personalInfo.Address!),
         };
     }
 

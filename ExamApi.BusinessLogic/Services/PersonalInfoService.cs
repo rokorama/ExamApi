@@ -19,7 +19,7 @@ public class PersonalInfoService : IPersonalInfoService
         _logger = logger;
     }
 
-    public bool AddInfo(PersonalInfoUploadRequest uploadRequest, Guid userId, out PersonalInfo result)
+    public bool AddInfo(PersonalInfoUploadRequest uploadRequest, Guid userId, out PersonalInfo? result)
     {
         if (_personalInfoRepo.CheckForExistingPersonalInfo(userId))
         {
@@ -38,7 +38,7 @@ public class PersonalInfoService : IPersonalInfoService
         return true;
     }
 
-    public PersonalInfoDto GetInfo(Guid userId)
+    public PersonalInfoDto? GetInfo(Guid userId)
     {
         var entry = _personalInfoRepo.GetInfo(userId);
         if (entry == null)
@@ -48,8 +48,8 @@ public class PersonalInfoService : IPersonalInfoService
 
     public bool UpdateInfo<T>(Guid userId, string propertyName, T newValue)
     {
-        var entry = _personalInfoRepo.GetInfo(userId);
-        if (entry.Address == null)
+        PersonalInfo? entry = _personalInfoRepo.GetInfo(userId);
+        if (entry == null)
         {
             _logger.LogInformation($"Failed attempt to update non-existing personal info for user {userId}.");
             return false;
