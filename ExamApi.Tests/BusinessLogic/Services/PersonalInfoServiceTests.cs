@@ -43,8 +43,8 @@ public class PersonalInfoServiceTests
 
         // Act
         var mockPersonalInfoDto = _sut.GetInfo(userId);
+        
         // Assert
-
         Assert.Equal(mockPersonalInfoDto!.FirstName, personalInfoFirstName);
     }
 }

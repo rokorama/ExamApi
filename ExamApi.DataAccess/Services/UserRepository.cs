@@ -38,7 +38,7 @@ public class UserRepository : IUserRepository
             _logger.LogInformation($"New user {user.Username} created at {DateTime.UtcNow}.");
             return true;
         }
-        catch (Exception ex)
+        catch (DbUpdateException ex)
         {
             _logger.LogError($"Failed to save new user {user.Username} at {DateTime.UtcNow}.", ex);
             return false;
