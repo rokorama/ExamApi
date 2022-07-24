@@ -49,11 +49,7 @@ public class InformationController : ControllerBase
     [HttpGet("{userId}")]
     public ActionResult<PersonalInfoDto> GetInfo(Guid userId)
     {
-<<<<<<< HEAD
         var result = _personalInfoService.GetInfo(userId);
-=======
-        PersonalInfoDto? result = _personalInfoService.GetInfo(userId);
->>>>>>> project-structure
         if (result == null)
             return NotFound();
         return Ok(result);
