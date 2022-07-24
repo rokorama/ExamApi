@@ -35,16 +35,12 @@ public class PersonalInfoService : IPersonalInfoService
         return true;
     }
 
-    public bool GetInfo(Guid userId, out PersonalInfoDto result)
+    public PersonalInfoDto GetInfo(Guid userId)
     {
         var entry = _personalInfoRepo.GetInfo(userId);
         if (entry == null)
-        {
-            result = null;
-            return false;
-        }
-        result = ObjectMapper.MapPersonalInfoDto(entry);
-        return true;
+            return null;
+        return ObjectMapper.MapPersonalInfoDto(entry);
     }
 
     public bool UpdateInfo<T>(Guid userId, string propertyName, T newValue)
