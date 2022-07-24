@@ -16,6 +16,10 @@ public class PersonalInfoRepository : IPersonalInfoRepository
         _logger = logger;
     }
 
+    public PersonalInfoRepository()
+    {
+    }
+
     public bool AddInfo(PersonalInfo personalInfo, Guid userId)
     {
         // var user = _dbContext.Users.Find(userId);

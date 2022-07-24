@@ -1,5 +1,6 @@
 using ExamApi.BusinessLogic;
 using ExamApi.BusinessLogic.Helpers;
+using ExamApi.DataAccess;
 using ExamApi.Models;
 using ExamApi.Models.DTOs;
 using ExamApi.Models.UploadRequests;
@@ -48,7 +49,8 @@ public class InformationController : ControllerBase
     [HttpGet("{userId}")]
     public ActionResult<PersonalInfoDto> GetInfo(Guid userId)
     {
-        if (!_personalInfoService.GetInfo(userId, out var result))
+        var result = _personalInfoService.GetInfo(userId);
+        if (result == null)
             return NotFound();
         return Ok(result);
     }
