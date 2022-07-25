@@ -30,4 +30,12 @@ public class AddressService : IAddressService
         _propertyChanger.UpdateAddress<T>(entry.Address!, propertyName, newValue);
         return _personalInfoRepo.UpdateInfo(userId, entry);
     }
+
+    public Address? GetAddress(Guid userId)
+    {
+        var result = _personalInfoRepo.GetInfo(userId);
+        if (result == null)
+            return null;
+        return result.Address;
+    }
 }

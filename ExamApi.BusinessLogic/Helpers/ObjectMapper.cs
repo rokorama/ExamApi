@@ -6,9 +6,9 @@ namespace ExamApi.BusinessLogic.Helpers;
 
 public class ObjectMapper : IObjectMapper
 {
-    private readonly ImageConverter _imageConverter;
+    private readonly IImageConverter _imageConverter;
 
-    public ObjectMapper(ImageConverter imageConverter)
+    public ObjectMapper(IImageConverter imageConverter)
     {
         _imageConverter = imageConverter;
     }
@@ -30,7 +30,6 @@ public class ObjectMapper : IObjectMapper
     {
         return new Address()
         {
-            // Id = Guid.NewGuid(),
             City = addressDto.City,
             Street = addressDto.Street,
             House = addressDto.House,

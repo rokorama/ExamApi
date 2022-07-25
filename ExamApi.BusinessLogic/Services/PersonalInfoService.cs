@@ -47,7 +47,7 @@ public class PersonalInfoService : IPersonalInfoService
     public PersonalInfoDto? GetInfo(Guid userId)
     {
         var entry = _personalInfoRepo.GetInfo(userId);
-        if (entry == null)
+        if (entry is null)
             return null;
         return _mapper.MapPersonalInfoDto(entry);
     }
@@ -55,7 +55,7 @@ public class PersonalInfoService : IPersonalInfoService
     public bool UpdateInfo<T>(Guid userId, string propertyName, T newValue)
     {
         PersonalInfo? entry = _personalInfoRepo.GetInfo(userId);
-        if (entry == null)
+        if (entry is null)
         {
             _logger.LogInformation($"Failed attempt to update non-existing personal info for user {userId}.");
             return false;

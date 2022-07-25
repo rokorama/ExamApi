@@ -1,6 +1,5 @@
 using ExamApi.BusinessLogic;
 using ExamApi.BusinessLogic.Helpers;
-using ExamApi.DataAccess;
 using ExamApi.Models;
 using ExamApi.Models.DTOs;
 using ExamApi.Models.UploadRequests;
@@ -20,17 +19,20 @@ public class InformationController : ControllerBase
     private readonly IAddressService _addressService;
     private readonly IUserService _userService;
     private readonly ILogger<InformationController> _logger;
+    private readonly IObjectMapper _mapper;
 
     public InformationController(
                                  IPersonalInfoService personalInfoService,
                                  IAddressService addressService,
                                  IUserService userService,
-                                 ILogger<InformationController> logger)
+                                 ILogger<InformationController> logger,
+                                 IObjectMapper mapper)
     {
         _personalInfoService = personalInfoService;
         _addressService = addressService;
         _userService = userService;
         _logger = logger;
+        _mapper = mapper;
     }
 
     [Authorize]
@@ -42,14 +44,23 @@ public class InformationController : ControllerBase
         {
             return BadRequest($"One or more values are invalid.");
         }
-        var result = ObjectMapper.MapPersonalInfoDto(createdEntry!);
+        var result = _mapper.MapPersonalInfoDto(createdEntry!);
         return Created(new Uri(Request.GetEncodedUrl() + "/" + createdEntry!.Id), result);        
     }
 
-    [HttpGet("{userId}")]
-    public ActionResult<PersonalInfoDto> GetInfo(Guid userId)
+    [HttpGet("{userId}/personalInfo")]
+    public ActionResult<PersonalInfoDto> GetPersonalInfo(Guid userId)
     {
         var result = _personalInfoService.GetInfo(userId);
+        if (result == null)
+            return NotFound();
+        return Ok(result);
+    }
+
+    [HttpGet("{userId}/address")]
+    public ActionResult<PersonalInfoDto> GetAddress(Guid userId)
+    {
+        var result = _addressService.GetAddress(userId);
         if (result == null)
             return NotFound();
         return Ok(result);
@@ -93,8 +104,10 @@ public class InformationController : ControllerBase
     public ActionResult UpdatePhoto([FromForm] ImageUploadRequest image)
     {
         var user = _userService.GetUser(this.User!.Identity!.Name!).Id;
-        var imageBytes = ImageConverter.ConvertImage(image);
-        _personalInfoService.UpdateInfo<byte[]>(user, "Photo", imageBytes);
+        // var imageBytes = ImageConverter.ConvertImage(image);
+
+        //placeholder value
+        _personalInfoService.UpdateInfo<byte[]>(user, "Photo", new byte[] {});
         return NoContent();
     }
 
