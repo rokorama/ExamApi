@@ -108,10 +108,10 @@ public class PersonalInfoServiceTests
         _mapperMock.Setup(m => m.MapPersonalInfoUpload(It.IsAny<PersonalInfoUploadRequest>())).Returns(testPersonalInfo);
         
         // Act
-        _sut.AddInfo(uploadRequest, userId, out PersonalInfo? result);
+        _sut.AddInfo(uploadRequest, userId);
         
         // Assert
-        Assert.Equal(uploadRequest.Email, result!.Email);
+        Assert.Equal(uploadRequest.Email, testPersonalInfo!.Email);
     }
 
     // AddInfo(PersonalInfoUploadRequest uploadRequest, Guid userId, out PersonalInfo? createdEntry);
