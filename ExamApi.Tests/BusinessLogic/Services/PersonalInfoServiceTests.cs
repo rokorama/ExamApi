@@ -96,7 +96,7 @@ public class PersonalInfoServiceTests
 
             // set up repo returns
         _repoMock.Setup(r => r.AddInfo(It.IsAny<PersonalInfo>(), userId)).Returns(true);
-        _repoMock.Setup(r => r.CheckForExistingPersonalInfo(userId)).Returns(false);
+        _repoMock.Setup(r => r.UserHasExistingPersonalInfo(userId)).Returns(false);
         
             // set up image converter returns
         var _imageConverterMock = new Mock<IImageConverter>();

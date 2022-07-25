@@ -59,7 +59,7 @@ public class PersonalInfoRepository : IPersonalInfoRepository
         }
     }
 
-    public bool CheckForExistingPersonalInfo(Guid userId)
+    public bool UserHasExistingPersonalInfo(Guid userId)
     {
         var personalInfo = _dbContext.Users.Include(u => u.PersonalInfo)
                                             .SingleOrDefault(u => u.Id == userId)!
@@ -67,7 +67,7 @@ public class PersonalInfoRepository : IPersonalInfoRepository
         return (personalInfo != null);
     }
 
-    public bool CheckForExistingAddress(Guid userId)
+    public bool UserHasExistingAddress(Guid userId)
     {
         try
         {

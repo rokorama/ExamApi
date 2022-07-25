@@ -27,7 +27,7 @@ public class PersonalInfoService : IPersonalInfoService
 
     public bool AddInfo(PersonalInfoUploadRequest uploadRequest, Guid userId, out PersonalInfo? result)
     {
-        if (_personalInfoRepo.CheckForExistingPersonalInfo(userId))
+        if (_personalInfoRepo.UserHasExistingPersonalInfo(userId))
         {
             // TODO - works, but returns error for invalid values
             _logger.LogInformation($"User {userId} attempted to add duplicate personal info at {DateTime.Now}");
