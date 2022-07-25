@@ -3,6 +3,10 @@
     <ProjectReference Include="..\ExamApi.Models\ExamApi.Models.csproj"/>
     <ProjectReference Include="..\ExamApi.DataAccess\ExamApi.DataAccess.csproj"/>
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.1.0"/>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.1.0"/>
+  </ItemGroup>
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <nullable>enable</nullable>

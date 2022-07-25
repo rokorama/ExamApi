@@ -1,10 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "vo3S6jeP5elrIpk3z1+Ex2A01uAvk4FPJ51WYOvIymbpDLdCI6SZcfYD+4u73k+r7ZGQ3bowIlZ7UVHG3Kd8Ew==",
+  "dgSpecHash": "92txUcQq5lWdZyJv9XJNx9MZ3wOW5GOIw0BjY85JKXSpUyndH9MmM7UfzSMgfWusIX80NrjI8UfpwQWRct1dBQ==",
   "success": true,
   "projectFilePath": "/Users/crisc/csharp/ExamApi/ExamApi/ExamApi.csproj",
   "expectedPackageFiles": [
     "/Users/crisc/.nuget/packages/bcrypt.net-next/4.0.3/bcrypt.net-next.4.0.3.nupkg.sha512",
+    "/Users/crisc/.nuget/packages/fluentvalidation/11.1.0/fluentvalidation.11.1.0.nupkg.sha512",
+    "/Users/crisc/.nuget/packages/fluentvalidation.dependencyinjectionextensions/11.1.0/fluentvalidation.dependencyinjectionextensions.11.1.0.nupkg.sha512",
     "/Users/crisc/.nuget/packages/humanizer.core/2.8.26/humanizer.core.2.8.26.nupkg.sha512",
     "/Users/crisc/.nuget/packages/microsoft.aspnetcore.authentication.jwtbearer/6.0.7/microsoft.aspnetcore.authentication.jwtbearer.6.0.7.nupkg.sha512",
     "/Users/crisc/.nuget/packages/microsoft.csharp/4.5.0/microsoft.csharp.4.5.0.nupkg.sha512",
