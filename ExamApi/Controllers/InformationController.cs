@@ -4,6 +4,7 @@ using ExamApi.Models;
 using ExamApi.Models.DTOs;
 using ExamApi.Models.UploadRequests;
 using ExamApi.UserAccess;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -20,19 +21,22 @@ public class InformationController : ControllerBase
     private readonly IUserService _userService;
     private readonly ILogger<InformationController> _logger;
     private readonly IObjectMapper _mapper;
+    private readonly IValidator<PersonalInfoUploadRequest> _personalInfoValidator;
 
     public InformationController(
                                  IPersonalInfoService personalInfoService,
                                  IAddressService addressService,
                                  IUserService userService,
                                  ILogger<InformationController> logger,
-                                 IObjectMapper mapper)
+                                 IObjectMapper mapper,
+                                 IValidator<PersonalInfoUploadRequest> personalInfoValidator)
     {
         _personalInfoService = personalInfoService;
         _addressService = addressService;
         _userService = userService;
         _logger = logger;
         _mapper = mapper;
+        _personalInfoValidator = personalInfoValidator;
     }
 
     [Authorize]
@@ -40,19 +44,28 @@ public class InformationController : ControllerBase
     public ActionResult<PersonalInfoDto> AddPersonalInfo([FromForm] PersonalInfoUploadRequest uploadRequest)
     {
         var userId = _userService.GetUser(this.User!.Identity!.Name!).Id;
-        if (!_personalInfoService.AddInfo(uploadRequest, userId, out PersonalInfo? createdEntry))
-        {
+        
+        // this is a mess
+        var validationResult = _personalInfoValidator.Validate(uploadRequest);
+        if (!validationResult.IsValid)
             return BadRequest($"One or more values are invalid.");
+
+        var result = _personalInfoService.AddInfo(uploadRequest, userId);
+        if (result.Success is true)
+        {
+            var mappedEntry = _personalInfoService.GetInfo(userId);
+            var entryId = _personalInfoService.GetInfoId(userId);
+            return Created(new Uri(Request.GetEncodedUrl() + "/" + entryId!), mappedEntry);        
         }
-        var result = _mapper.MapPersonalInfoDto(createdEntry!);
-        return Created(new Uri(Request.GetEncodedUrl() + "/" + createdEntry!.Id), result);        
+        else
+            return BadRequest("Cannot add submit personal info more than once per user.");
     }
 
     [HttpGet("{userId}/personalInfo")]
     public ActionResult<PersonalInfoDto> GetPersonalInfo(Guid userId)
     {
         var result = _personalInfoService.GetInfo(userId);
-        if (result == null)
+        if (result is null)
             return NotFound();
         return Ok(result);
     }
@@ -61,7 +74,7 @@ public class InformationController : ControllerBase
     public ActionResult<PersonalInfoDto> GetAddress(Guid userId)
     {
         var result = _addressService.GetAddress(userId);
-        if (result == null)
+        if (result is null)
             return NotFound();
         return Ok(result);
     }
@@ -146,10 +159,11 @@ public class InformationController : ControllerBase
 
     [Authorize]
     [HttpPatch("flat")]
-    public ActionResult UpdateFlat([FromBody (EmptyBodyBehavior = EmptyBodyBehavior.Allow)] int? flat = null)
+    public ActionResult UpdateFlat(int? flat = null)
     {
         var user = _userService.GetUser(this.User!.Identity!.Name!).Id;
-        if (!_addressService.UpdateAddress<int?>(user, "Flat", flat))
+        var updateSuccessful = _addressService.UpdateAddress<int?>(user, "Flat", flat).Success;
+        if (updateSuccessful is false)
             return BadRequest();
         return NoContent();
     }
