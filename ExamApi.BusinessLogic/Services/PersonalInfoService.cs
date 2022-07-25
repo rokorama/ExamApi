@@ -11,12 +11,18 @@ public class PersonalInfoService : IPersonalInfoService
 {
     private readonly IPersonalInfoRepository _personalInfoRepo;
     private readonly ILogger<PersonalInfoService> _logger;
+    private readonly IObjectMapper _mapper;
+    private readonly IPropertyChanger _propertyChanger;
 
     public PersonalInfoService(IPersonalInfoRepository personalInfoRepo,
-                               ILogger<PersonalInfoService> logger)
+                               ILogger<PersonalInfoService> logger,
+                               IObjectMapper mapper,
+                               IPropertyChanger propertyChanger)
     {
         _personalInfoRepo = personalInfoRepo;
         _logger = logger;
+        _mapper = mapper;
+        _propertyChanger = propertyChanger;
     }
 
     public bool AddInfo(PersonalInfoUploadRequest uploadRequest, Guid userId, out PersonalInfo? result)
@@ -28,7 +34,7 @@ public class PersonalInfoService : IPersonalInfoService
             result = null;
             return false;
         }
-        result = ObjectMapper.MapPersonalInfoUpload(uploadRequest);
+        result = _mapper.MapPersonalInfoUpload(uploadRequest);
         if (!_personalInfoRepo.AddInfo(result, userId))
         {
             result = null;
@@ -43,7 +49,7 @@ public class PersonalInfoService : IPersonalInfoService
         var entry = _personalInfoRepo.GetInfo(userId);
         if (entry == null)
             return null;
-        return ObjectMapper.MapPersonalInfoDto(entry);
+        return _mapper.MapPersonalInfoDto(entry);
     }
 
     public bool UpdateInfo<T>(Guid userId, string propertyName, T newValue)
@@ -54,7 +60,7 @@ public class PersonalInfoService : IPersonalInfoService
             _logger.LogInformation($"Failed attempt to update non-existing personal info for user {userId}.");
             return false;
         }
-        PropertyChanger.UpdatePersonalInfo<T>(entry, propertyName, newValue);
+        _propertyChanger.UpdatePersonalInfo<T>(entry, propertyName, newValue);
         return _personalInfoRepo.UpdateInfo(userId, entry);
     }
 }

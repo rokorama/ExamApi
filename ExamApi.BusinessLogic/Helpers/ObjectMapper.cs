@@ -4,37 +4,29 @@ using ExamApi.Models.UploadRequests;
 
 namespace ExamApi.BusinessLogic.Helpers;
 
-public static class ObjectMapper
+public class ObjectMapper : IObjectMapper
 {
-    public static PersonalInfo MapPersonalInfoUpload(PersonalInfoUploadRequest uploadRequest)
+    private readonly ImageConverter _imageConverter;
+
+    public ObjectMapper(ImageConverter imageConverter)
+    {
+        _imageConverter = imageConverter;
+    }
+
+    public PersonalInfo MapPersonalInfoUpload(PersonalInfoUploadRequest uploadRequest)
     {
         return new PersonalInfo()
         {
-            // Id = Guid.NewGuid(),
             FirstName = uploadRequest.FirstName,
             LastName = uploadRequest.LastName,
             PersonalNumber = uploadRequest.PersonalNumber,
             Email = uploadRequest.Email,
-            Photo = ImageConverter.ConvertImage(uploadRequest.ImageUpload!),
+            Photo = _imageConverter.ConvertImage(uploadRequest.ImageUpload!),
             Address = MapAddressEntity(uploadRequest.Address!),
         };
     }
 
-    // public static PersonalInfo MapPersonalInfoEntity(PersonalInfoDto personalInfoDto)
-    // {
-    //     return new PersonalInfo()
-    //     {
-    //         Id = Guid.NewGuid(),
-    //         FirstName = personalInfoDto.FirstName,
-    //         LastName = personalInfoDto.LastName,
-    //         PersonalNumber = personalInfoDto.PersonalNumber,
-    //         Email = personalInfoDto.Email,
-    //         Photo = personalInfoDto.Photo,
-    //         Address = MapAddressEntity(personalInfoDto.Address)
-    //     };
-    // }
-
-    public static Address MapAddressEntity(AddressDto addressDto)
+    public Address MapAddressEntity(AddressDto addressDto)
     {
         return new Address()
         {
@@ -46,7 +38,7 @@ public static class ObjectMapper
         };
     }
 
-    public static PersonalInfoDto MapPersonalInfoDto(PersonalInfo personalInfo)
+    public PersonalInfoDto MapPersonalInfoDto(PersonalInfo personalInfo)
     {
         return new PersonalInfoDto()
         {
@@ -59,7 +51,7 @@ public static class ObjectMapper
         };
     }
 
-    public static AddressDto MapAddressDto(Address address)
+    public AddressDto MapAddressDto(Address address)
     {
         return new AddressDto()
         {

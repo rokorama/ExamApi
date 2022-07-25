@@ -1,11 +1,11 @@
 using System.Reflection;
 using ExamApi.Models;
 
-namespace ExamApi.BusinessLogic;
+namespace ExamApi.BusinessLogic.Helpers;
 
-public static class PropertyChanger
+public class PropertyChanger : IPropertyChanger
 {
-    public static object UpdatePersonalInfo<T>(PersonalInfo obj, string propertyToUpdate, T newValue)
+    public object UpdatePersonalInfo<T>(PersonalInfo obj, string propertyToUpdate, T newValue)
     {
         Type t = obj.GetType();
         PropertyInfo? targetProperty = t.GetProperty(propertyToUpdate);
@@ -14,7 +14,7 @@ public static class PropertyChanger
         return obj;
     }
 
-    public static object UpdateAddress<T>(Address obj, string propertyToUpdate, T newValue)
+    public object UpdateAddress<T>(Address obj, string propertyToUpdate, T newValue)
     {
         Type t = obj.GetType();
         PropertyInfo? targetProperty = t.GetProperty(propertyToUpdate);

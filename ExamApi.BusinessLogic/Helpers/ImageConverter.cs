@@ -5,16 +5,16 @@ using SixLabors.ImageSharp.Processing;
 
 namespace ExamApi.BusinessLogic.Helpers;
 
-public static class ImageConverter
+public class ImageConverter : IImageConverter
 {    
-    public static byte[] ConvertImage(ImageUploadRequest imageUploadRequest)
+    public byte[] ConvertImage(ImageUploadRequest imageUploadRequest)
     {
         using var memoryStream = new MemoryStream();
         imageUploadRequest.Image!.CopyTo(memoryStream);
         return ResizeImage(memoryStream.ToArray());
     }
 
-    private static byte[] ResizeImage(byte[] imageBytes)
+    private byte[] ResizeImage(byte[] imageBytes)
     {
         using (Image image = Image.Load(imageBytes))
         {
