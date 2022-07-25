@@ -1,6 +1,7 @@
 using ExamApi.BusinessLogic.Helpers;
 using ExamApi.DataAccess;
 using ExamApi.Models;
+using ExamApi.Models.DTOs;
 using Microsoft.Extensions.Logging;
 
 namespace ExamApi.BusinessLogic;
@@ -18,23 +19,22 @@ public class AddressService : IAddressService
         _propertyChanger = propertyChanger;
     }
 
-    public bool UpdateAddress<T>(Guid userId, string propertyName, T newValue)
+    public ResponseDto UpdateAddress<T>(Guid userId, string propertyName, T newValue)
     {
         PersonalInfo? entry = _personalInfoRepo.GetInfo(userId);
-        if (entry == null)
+        if (entry is null)
         {
             _logger.LogInformation($"Failed attempt to update non-existing address for user {userId}.");
-            return false;
-            //throw error if false
+            return new ResponseDto(false, "User has no existing data to update. Please submit complete personal information first.");
         }
         _propertyChanger.UpdateAddress<T>(entry.Address!, propertyName, newValue);
-        return _personalInfoRepo.UpdateInfo(userId, entry);
+        return new ResponseDto() { Success = _personalInfoRepo.UpdateInfo(userId, entry) };
     }
 
     public Address? GetAddress(Guid userId)
     {
         var result = _personalInfoRepo.GetInfo(userId);
-        if (result == null)
+        if (result is null)
             return null;
         return result.Address;
     }

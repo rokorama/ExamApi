@@ -6,7 +6,8 @@ namespace ExamApi.BusinessLogic;
 
 public interface IPersonalInfoService
 {
-    public bool AddInfo(PersonalInfoUploadRequest uploadRequest, Guid userId, out PersonalInfo? createdEntry);
+    public ResponseDto AddInfo(PersonalInfoUploadRequest uploadRequest, Guid userId);
     public PersonalInfoDto? GetInfo(Guid userId);
-    public bool UpdateInfo<T>(Guid userId, string propertyName, T newValue);
+    public Guid? GetInfoId(Guid userId);
+    public ResponseDto UpdateInfo<T>(Guid userId, string propertyName, T newValue);
 }

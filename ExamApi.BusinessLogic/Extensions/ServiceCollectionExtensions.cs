@@ -1,4 +1,5 @@
 using ExamApi.BusinessLogic.Helpers;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ExamApi.BusinessLogic.Extensions;
@@ -12,6 +13,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IObjectMapper, ObjectMapper>();
         services.AddScoped<IImageConverter, ImageConverter>();
         services.AddScoped<IPropertyChanger, PropertyChanger>();
+        services.AddValidatorsFromAssemblyContaining<PersonalInfoUploadRequestValidator>();
+        services.AddValidatorsFromAssemblyContaining<AddressDtoValidator>();
 
         return services;
     }

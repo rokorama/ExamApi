@@ -25,23 +25,16 @@ public class PersonalInfoService : IPersonalInfoService
         _propertyChanger = propertyChanger;
     }
 
-    public bool AddInfo(PersonalInfoUploadRequest uploadRequest, Guid userId, out PersonalInfo? result)
+    public ResponseDto AddInfo(PersonalInfoUploadRequest uploadRequest, Guid userId)
     {
         if (_personalInfoRepo.UserHasExistingPersonalInfo(userId))
-        {
-            // TODO - works, but returns error for invalid values
-            _logger.LogInformation($"User {userId} attempted to add duplicate personal info at {DateTime.Now}");
-            result = null;
-            return false;
-        }
-        result = _mapper.MapPersonalInfoUpload(uploadRequest);
-        if (!_personalInfoRepo.AddInfo(result, userId))
-        {
-            result = null;
-            return false;
+            return new ResponseDto(false, "Cannot submit personal info more than one per user.");
 
-        }
-        return true;
+        var mappedEntry = _mapper.MapPersonalInfoUpload(uploadRequest);
+        if (!_personalInfoRepo.AddInfo(mappedEntry, userId))
+            return new ResponseDto(false, "Failed to add entry to the database.");
+        else
+            return new ResponseDto(true, null);
     }
 
     public PersonalInfoDto? GetInfo(Guid userId)
@@ -52,15 +45,23 @@ public class PersonalInfoService : IPersonalInfoService
         return _mapper.MapPersonalInfoDto(entry);
     }
 
-    public bool UpdateInfo<T>(Guid userId, string propertyName, T newValue)
+    public Guid? GetInfoId(Guid userId)
+    {
+        var entry = _personalInfoRepo.GetInfo(userId);
+        if (entry is null)
+            return null;
+        return entry.Id;
+    }
+
+    public ResponseDto UpdateInfo<T>(Guid userId, string propertyName, T newValue)
     {
         PersonalInfo? entry = _personalInfoRepo.GetInfo(userId);
         if (entry is null)
         {
             _logger.LogInformation($"Failed attempt to update non-existing personal info for user {userId}.");
-            return false;
+            return new ResponseDto(false);
         }
         _propertyChanger.UpdatePersonalInfo<T>(entry, propertyName, newValue);
-        return _personalInfoRepo.UpdateInfo(userId, entry);
+        return new ResponseDto() { Success = _personalInfoRepo.UpdateInfo(userId, entry) };
     }
 }
