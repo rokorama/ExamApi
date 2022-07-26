@@ -6,5 +6,5 @@ namespace ExamApi.BusinessLogic;
 public interface IAddressService
 {
     public ResponseDto UpdateAddress<T>(Guid userId, string propertyName, T newValue);
-    public Address? GetAddress(Guid userId);
+    public AddressDto? GetAddress(Guid userId);
 }
