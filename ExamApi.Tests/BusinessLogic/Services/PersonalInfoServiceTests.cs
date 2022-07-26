@@ -22,16 +22,17 @@ public class PersonalInfoServiceTests
     private readonly Mock<ILogger<PersonalInfoService>> _loggerMock = new Mock<ILogger<PersonalInfoService>>();
     private readonly Mock<IObjectMapper> _mapperMock = new Mock<IObjectMapper>();
     private readonly Mock<IPropertyChanger> _propertyChangerMock = new Mock<IPropertyChanger>();
-    private readonly Mock<IValidator<PersonalInfoUploadRequest>> _infoUploadValidatorMock = new Mock<IValidator<PersonalInfoUploadRequest>>();
+    private readonly IValidator<PersonalInfoUploadRequest> _infoUploadValidator;
 
     
     public PersonalInfoServiceTests()
     {
+        _infoUploadValidator = new InlineValidator<PersonalInfoUploadRequest>();
         _sut = new PersonalInfoService(_repoMock.Object,
                                        _loggerMock.Object,
                                        _mapperMock.Object,
                                        _propertyChangerMock.Object,
-                                       _infoUploadValidatorMock.Object);
+                                       _infoUploadValidator);
         _fixture = new Fixture().Customize(new AutoMoqCustomization { ConfigureMembers = true });
     }
 
@@ -41,25 +42,17 @@ public class PersonalInfoServiceTests
         // Arrange
         Guid userId = Guid.NewGuid();
         Guid personalInfoId = Guid.NewGuid();
-        string expectedFirstName = "Steve";
-        var personalInfo = new PersonalInfo()
-        {
-            Id = personalInfoId,
-            FirstName = expectedFirstName,
-            LastName = It.IsAny<String>(),  
-            PersonalNumber = It.IsAny<ulong>(),
-            Email = It.IsAny<String>(),
-            Photo = It.IsAny<byte[]>(),
-            Address = new Address()
-        };
+        var personalInfo = _fixture.Create<PersonalInfo>();
+        personalInfo.FirstName = "Steve";
+        
         _repoMock.Setup(r => r.GetInfo(userId)).Returns(personalInfo);
-        _mapperMock.Setup(m => m.MapPersonalInfoDto(personalInfo)).Returns(new PersonalInfoDto() { FirstName = expectedFirstName} );
+        _mapperMock.Setup(m => m.MapPersonalInfoDto(personalInfo)).Returns(new PersonalInfoDto() { FirstName = personalInfo.FirstName} );
 
         // Act
         PersonalInfoDto? mockPersonalInfoDto = _sut.GetInfo(userId);
         
         // Assert
-        Assert.Equal(mockPersonalInfoDto!.FirstName, expectedFirstName);
+        Assert.Equal(mockPersonalInfoDto!.FirstName, personalInfo.FirstName);
     }
 
     [Fact]
@@ -130,7 +123,7 @@ public class PersonalInfoServiceTests
         _repoMock.Setup(r => r.AddInfo(It.IsAny<PersonalInfo>(), userId)).Returns(true);
         _repoMock.Setup(r => r.UserHasExistingPersonalInfo(userId)).Returns(false);
         
-            // set up image converter returns
+        //     // set up image converter returns
         var _imageConverterMock = new Mock<IImageConverter>();
         var imageUploadRequestMock = _fixture.Create<ImageUploadRequest>();
         _imageConverterMock.Setup(i => i.ConvertImage(imageUploadRequestMock)).Returns(It.IsAny<byte[]>());
@@ -145,9 +138,6 @@ public class PersonalInfoServiceTests
         // Assert
         Assert.True(entrySubmisson.Success);
     }
-
-    // AddInfo(PersonalInfoUploadRequest uploadRequest, Guid userId, out PersonalInfo? createdEntry);
-        // with invalid info
     
     [Fact]
     public void AddInfo_ReturnsFailure_WhenInfoIsInvalid()
@@ -155,36 +145,42 @@ public class PersonalInfoServiceTests
         // Arrange
         Guid userId = _fixture.Create<Guid>();
         var uploadRequest = _fixture.Create<PersonalInfoUploadRequest>();
-        uploadRequest.Email = "test@asdasd.asd";
+        uploadRequest.Email = null;
 
-            // set up repo returns
-        _repoMock.Setup(r => r.AddInfo(It.IsAny<PersonalInfo>(), userId)).Returns(true);
-        _repoMock.Setup(r => r.UserHasExistingPersonalInfo(userId)).Returns(false);
+            // Override the subject under testing - the validator is not working properly in testing 
+            // and has to be set up specifically
+        var validatorOverride = new InlineValidator<PersonalInfoUploadRequest>();
+        validatorOverride.RuleFor(x => x.Email).Must(id => false); 
+        var sutOverride = new PersonalInfoService(_repoMock.Object,
+                                       _loggerMock.Object,
+                                       _mapperMock.Object,
+                                       _propertyChangerMock.Object,
+                                       validatorOverride);
         
-            // set up image converter returns
-        var _imageConverterMock = new Mock<IImageConverter>();
-        var imageUploadRequestMock = _fixture.Create<ImageUploadRequest>();
-        _imageConverterMock.Setup(i => i.ConvertImage(imageUploadRequestMock)).Returns(It.IsAny<byte[]>());
+        // Act
+        var entrySubmisson = sutOverride.AddInfo(uploadRequest, userId);
+        
+        // Assert
+        Assert.False(entrySubmisson.Success);
+        Assert.Equal("One or more values are invalid.", entrySubmisson.Message);      
+    }
 
-        var testPersonalInfo = _fixture.Create<PersonalInfo>();
-        testPersonalInfo.Email = "test@asdasd.asd";
-        _mapperMock.Setup(m => m.MapPersonalInfoUpload(It.IsAny<PersonalInfoUploadRequest>())).Returns(testPersonalInfo);
+    [Fact]
+    public void AddInfo_ReturnsFailure_UserHasExistingInfo()
+    {
+            // Arrange
+        Guid userId = _fixture.Create<Guid>();
+        var uploadRequest = _fixture.Create<PersonalInfoUploadRequest>();
+        uploadRequest.Email = null;
+
+        _repoMock.Setup(x => x.UserHasExistingPersonalInfo(userId)).Returns(true);
         
         // Act
         var entrySubmisson = _sut.AddInfo(uploadRequest, userId);
         
         // Assert
         Assert.False(entrySubmisson.Success);
-        Assert.Equal("Failed to add entry to the database.", entrySubmisson.Message);      
-    }
-
-    // AddInfo(PersonalInfoUploadRequest uploadRequest, Guid userId, out PersonalInfo? createdEntry);
-        // with existing info
-
-    [Fact]
-    public void AddInfo_ReturnsFailure_UserHasExistingInfo()
-    {
-        
+        Assert.Equal("Cannot submit personal info more than one per user.", entrySubmisson.Message);   
     }
 
 
