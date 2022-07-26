@@ -16,10 +16,6 @@ public class PersonalInfoRepository : IPersonalInfoRepository
         _logger = logger;
     }
 
-    // public PersonalInfoRepository()
-    // {
-    // }
-
     public bool AddInfo(PersonalInfo personalInfo, Guid userId)
     {
         var dbEntry = _dbContext.Users.Find(userId);
@@ -36,6 +32,15 @@ public class PersonalInfoRepository : IPersonalInfoRepository
                                .Include(u => u.PersonalInfo!.Address)
                                .SingleOrDefault(i => i.Id == userId)!
                                .PersonalInfo;
+    }
+
+    public Guid? GetInfoId(Guid userId)
+    {
+        return _dbContext.Users.Include(u => u.PersonalInfo)
+                               .Include(u => u.PersonalInfo!.Address)
+                               .SingleOrDefault(i => i.Id == userId)!
+                               .PersonalInfo!
+                               .Id;
     }
 
     public bool UpdateInfo(Guid userId, PersonalInfo updatedEntry)
