@@ -23,16 +23,19 @@ public class PersonalInfoServiceTests
     private readonly Mock<IObjectMapper> _mapperMock = new Mock<IObjectMapper>();
     private readonly Mock<IPropertyChanger> _propertyChangerMock = new Mock<IPropertyChanger>();
     private readonly IValidator<PersonalInfoUploadRequest> _infoUploadValidator;
+    private readonly IValidator<PersonalInfo> _infoValidator;
 
     
     public PersonalInfoServiceTests()
     {
         _infoUploadValidator = new InlineValidator<PersonalInfoUploadRequest>();
+        _infoValidator = new InlineValidator<PersonalInfo>();
         _sut = new PersonalInfoService(_repoMock.Object,
                                        _loggerMock.Object,
                                        _mapperMock.Object,
                                        _propertyChangerMock.Object,
-                                       _infoUploadValidator);
+                                       _infoUploadValidator,
+                                       _infoValidator);
         _fixture = new Fixture().Customize(new AutoMoqCustomization { ConfigureMembers = true });
     }
 
@@ -44,7 +47,7 @@ public class PersonalInfoServiceTests
         Guid personalInfoId = Guid.NewGuid();
         var personalInfo = _fixture.Create<PersonalInfo>();
         personalInfo.FirstName = "Steve";
-        
+
         _repoMock.Setup(r => r.GetInfo(userId)).Returns(personalInfo);
         _mapperMock.Setup(m => m.MapPersonalInfoDto(personalInfo)).Returns(new PersonalInfoDto() { FirstName = personalInfo.FirstName} );
 
@@ -150,12 +153,13 @@ public class PersonalInfoServiceTests
             // Override the subject under testing - the validator is not working properly in testing 
             // and has to be set up specifically
         var validatorOverride = new InlineValidator<PersonalInfoUploadRequest>();
-        validatorOverride.RuleFor(x => x.Email).Must(id => false); 
+        validatorOverride.RuleFor(x => x.Email).Must(email => false); 
         var sutOverride = new PersonalInfoService(_repoMock.Object,
-                                       _loggerMock.Object,
-                                       _mapperMock.Object,
-                                       _propertyChangerMock.Object,
-                                       validatorOverride);
+                                                  _loggerMock.Object,
+                                                  _mapperMock.Object,
+                                                  _propertyChangerMock.Object,
+                                                  validatorOverride,
+                                                  _infoValidator);
         
         // Act
         var entrySubmisson = sutOverride.AddInfo(uploadRequest, userId);
@@ -183,11 +187,80 @@ public class PersonalInfoServiceTests
         Assert.Equal("Cannot submit personal info more than one per user.", entrySubmisson.Message);   
     }
 
+    [Fact]
+    public void UpdateInfo_WorksCorrectly_WhenNewValueIsValid()
+    {
+        // Arrange
+        var userId = _fixture.Create<Guid>();
+        var infoBeforeChange = _fixture.Create<PersonalInfo>();
+        _repoMock.Setup(r => r.GetInfo(userId)).Returns(infoBeforeChange);
+        _repoMock.Setup(r => r.UpdateInfo(userId, It.IsAny<PersonalInfo>())).Returns(true);
+        var propertyToChange = "Email";
+        var newValue = "test@aaaaa.com";
+
+        var infoAfterChange = infoBeforeChange;
+        infoAfterChange.Email = newValue;
+
+        _propertyChangerMock.Setup(pc => pc.UpdatePersonalInfo(infoBeforeChange, propertyToChange, newValue))
+                            .Returns(infoAfterChange);
+
+        
+        // Act
+        var change = _sut.UpdateInfo<string>(userId, propertyToChange, newValue);
+
+        // Assert
+        Assert.True(change.Success);
+    }
+
+    [Fact]
+    public void UpdateInfo_ReturnsFailure_WhenInputIsInvalid()
+    {
+        // Arrange
+        var userId = _fixture.Create<Guid>();
+        var infoBeforeChange = _fixture.Create<PersonalInfo>();
+        _repoMock.Setup(r => r.GetInfo(userId)).Returns(infoBeforeChange);
+        _repoMock.Setup(r => r.UpdateInfo(userId, It.IsAny<PersonalInfo>())).Returns(false);
+        var propertyToChange = "Email";
+        string newValue = null!;
+
+        var infoAfterChange = infoBeforeChange;
+        infoAfterChange.Email = null;
+
+            // Override the subject under testing - the validator is not working properly in testing 
+            // and has to be set up specifically
+        var validatorOverride = new InlineValidator<PersonalInfo>();
+        validatorOverride.RuleFor(x => x.Email).Must(email => false); 
+        var sutOverride = new PersonalInfoService(_repoMock.Object,
+                                                  _loggerMock.Object,
+                                                  _mapperMock.Object,
+                                                  _propertyChangerMock.Object,
+                                                  _infoUploadValidator,
+                                                  validatorOverride);
+
+        // Act
+        var change = sutOverride.UpdateInfo<string>(userId, propertyToChange, newValue);
+
+        // Assert
+        Assert.False(change.Success);
+        Assert.Equal($"Cannot update {propertyToChange} to an invalid value.", change.Message);
+    }
 
     // public bool UpdateInfo<T>(Guid userId, string propertyName, T newValue);
-        // with valid info
-    // public bool UpdateInfo<T>(Guid userId, string propertyName, T newValue);
-        // with invalid info
-    // public bool UpdateInfo<T>(Guid userId, string propertyName, T newValue);
         // with no existing previous info
+    [Fact]
+    public void UpdateInfo_ReturnsFailure_WhenNoPreviousInfoExists()
+    {
+        // Arrange
+        var userId = _fixture.Create<Guid>();
+        var infoBeforeChange = _fixture.Create<PersonalInfo>();
+        _repoMock.Setup(r => r.GetInfo(userId)).Returns(value: null!);
+        _repoMock.Setup(r => r.UserHasExistingPersonalInfo(userId)).Returns(true);
+
+        // Act
+        var change = _sut.UpdateInfo<string>(userId, It.IsAny<string>(), It.IsAny<string>());
+
+        // Assert
+        Assert.False(change.Success);
+        Assert.Equal("No data to update. Please submit the full personal info form first.", change.Message);
+    }
 }

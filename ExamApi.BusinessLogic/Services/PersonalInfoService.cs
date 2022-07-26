@@ -15,18 +15,21 @@ public class PersonalInfoService : IPersonalInfoService
     private readonly IObjectMapper _mapper;
     private readonly IPropertyChanger _propertyChanger;
     IValidator<PersonalInfoUploadRequest> _personalInfoUploadValidator;
+    IValidator<PersonalInfo> _personalInfoValidator;
 
     public PersonalInfoService(IPersonalInfoRepository personalInfoRepo,
                                ILogger<PersonalInfoService> logger,
                                IObjectMapper mapper,
                                IPropertyChanger propertyChanger,
-                               IValidator<PersonalInfoUploadRequest> personalInfoUploadValidator)
+                               IValidator<PersonalInfoUploadRequest> personalInfoUploadValidator,
+                               IValidator<PersonalInfo> personalInfoValidator)
     {
         _personalInfoRepo = personalInfoRepo;
         _logger = logger;
         _mapper = mapper;
         _propertyChanger = propertyChanger;
         _personalInfoUploadValidator = personalInfoUploadValidator;
+        _personalInfoValidator = personalInfoValidator;
     }
 
     public ResponseDto AddInfo(PersonalInfoUploadRequest uploadRequest, Guid userId)
@@ -65,10 +68,13 @@ public class PersonalInfoService : IPersonalInfoService
         PersonalInfo? entry = _personalInfoRepo.GetInfo(userId);
         if (entry is null)
         {
-            _logger.LogInformation($"Failed attempt to update non-existing personal info for user {userId}.");
-            return new ResponseDto(false);
+            // _logger.LogInformation($"Failed attempt to update non-existing personal info for user {userId}.");
+            return new ResponseDto(false, "No data to update. Please submit the full personal info form first.");
         }
-        _propertyChanger.UpdatePersonalInfo<T>(entry, propertyName, newValue);
-        return new ResponseDto() { Success = _personalInfoRepo.UpdateInfo(userId, entry) };
+        var updatedEntry = _propertyChanger.UpdatePersonalInfo<T>(entry, propertyName, newValue);
+        if (_personalInfoValidator.Validate(entry).IsValid is false)
+            return new ResponseDto(false, $"Cannot update {propertyName} to an invalid value.");
+            
+        return new ResponseDto() { Success = _personalInfoRepo.UpdateInfo(userId, (PersonalInfo)updatedEntry) };
     }
 }
