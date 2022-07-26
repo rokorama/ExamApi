@@ -7,4 +7,5 @@ public interface IAddressService
 {
     public ResponseDto UpdateAddress<T>(Guid userId, string propertyName, T newValue);
     public AddressDto? GetAddress(Guid userId);
+    public Guid? GetAddressId(Guid userId);
 }

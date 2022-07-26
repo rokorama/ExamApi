@@ -11,16 +11,19 @@ public class AddressService : IAddressService
 {
     private readonly IAddressRepository _addressRepo;
     private readonly ILogger<AddressService> _logger;
+    private readonly IObjectMapper _mapper;
     private readonly IPropertyChanger _propertyChanger;
     private readonly IValidator<Address> _addressValidator;
 
     public AddressService(IAddressRepository addressRepo,
                           ILogger<AddressService> logger,
+                          IObjectMapper mapper,
                           IPropertyChanger propertyChanger,
                           IValidator<Address> addressValidator)
     {
         _addressRepo = addressRepo;
         _logger = logger;
+        _mapper = mapper;
         _propertyChanger = propertyChanger;
         _addressValidator = addressValidator;
     }
@@ -34,14 +37,26 @@ public class AddressService : IAddressService
             return new ResponseDto(false, "User has no existing data to update. Please submit complete personal information first.");
         }
         _propertyChanger.UpdateAddress<T>(entry, propertyName, newValue);
-        return new ResponseDto() { Success = _addressRepo.UpdateAddress(userId, entry) };
+
+        var change = _addressRepo.UpdateAddress(userId, entry);
+        if (change is false)
+            return new ResponseDto(false, $"Cannot update {propertyName} to an invalid value.");
+        return new ResponseDto(true);
     }
 
-    public Address? GetAddress(Guid userId)
+    public AddressDto? GetAddress(Guid userId)
     {
         var result = _addressRepo.GetAddress(userId);
         if (result is null)
             return null;
-        return result;
+        return _mapper.MapAddressDto(result);
+    }
+
+    public Guid? GetAddressId(Guid userId)
+    {
+        var entry = _addressRepo.GetAddressId(userId);
+        if (entry is null)
+            return null;
+        return entry;
     }
 }
