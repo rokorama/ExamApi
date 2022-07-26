@@ -38,9 +38,9 @@ public class AddressService : IAddressService
         }
 
         try 
-        { var updatedEntry = _propertyChanger.UpdateProperty<T>(entry, propertyName, newValue); }
-        catch (ArgumentException)
-        { return new ResponseDto(false, "Invalid property"); }
+        { var updatedEntry = _propertyChanger.UpdateProperty(entry, propertyName, newValue!); }
+        catch (Exception)
+        { return new ResponseDto(false, "Invalid input"); }
 
         var change = _addressRepo.UpdateAddress(userId, entry);
         if (change is false)

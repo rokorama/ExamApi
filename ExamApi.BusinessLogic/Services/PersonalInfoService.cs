@@ -73,9 +73,9 @@ public class PersonalInfoService : IPersonalInfoService
         }
         
         try
-        { var updatedEntry = _propertyChanger.UpdateProperty<T>(entry, propertyName, newValue); }
-        catch (ArgumentException)
-        { return new ResponseDto(false, "Invalid property"); }
+        { var updatedEntry = _propertyChanger.UpdateProperty(entry, propertyName, newValue!); }
+        catch (Exception)
+        { return new ResponseDto(false, "Invalid input"); }
         
         if (_personalInfoValidator.Validate(entry).IsValid is false)
             return new ResponseDto(false, $"Cannot update {propertyName} to an invalid value.");
