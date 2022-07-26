@@ -15,29 +15,29 @@ public class AddressRepository : IAddressRepository
         _logger = logger;
     }
 
-    public bool AddAddress(Address address, Guid userId)
-    {
-        var dbEntry = _dbContext.Users.Find(userId);
-        if (dbEntry is null || dbEntry.PersonalInfo is null)
-        {
-            _logger.LogInformation($"Failed attempt to append address to a nonexistent user/personal info entry. User ID = {userId}");
-            return false;
-        }
-        dbEntry.PersonalInfo.Address = address;
-        _dbContext.Entry(dbEntry).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+    // public bool AddAddress(Address address, Guid userId)
+    // {
+    //     var dbEntry = _dbContext.Users.Find(userId);
+    //     if (dbEntry is null || dbEntry.PersonalInfo is null)
+    //     {
+    //         _logger.LogInformation($"Failed attempt to append address to a nonexistent user/personal info entry. User ID = {userId}");
+    //         return false;
+    //     }
+    //     dbEntry.PersonalInfo.Address = address;
+    //     _dbContext.Entry(dbEntry).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
         
-        try
-        {
-            _dbContext.SaveChanges();
-            _logger.LogInformation($"Address entry {dbEntry.Id} updated at {DateTime.UtcNow}.");
-            return true;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Failed to update address entry {dbEntry.Id} at {DateTime.UtcNow}. {ex.Message}");
-            return false;
-        }
-    }
+    //     try
+    //     {
+    //         _dbContext.SaveChanges();
+    //         _logger.LogInformation($"Address entry {dbEntry.Id} updated at {DateTime.UtcNow}.");
+    //         return true;
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         _logger.LogError($"Failed to update address entry {dbEntry.Id} at {DateTime.UtcNow}. {ex.Message}");
+    //         return false;
+    //     }
+    // }
 
     public Address? GetAddress(Guid userId)
     {
