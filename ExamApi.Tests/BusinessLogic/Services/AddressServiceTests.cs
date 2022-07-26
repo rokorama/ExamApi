@@ -122,7 +122,7 @@ public class AddressServiceTests
         var infoAfterChange = infoBeforeChange;
         infoAfterChange.City = newValue;
 
-        _propertyChangerMock.Setup(pc => pc.UpdateAddress(infoBeforeChange, propertyToChange, newValue))
+        _propertyChangerMock.Setup(pc => pc.UpdateProperty(infoBeforeChange, propertyToChange, newValue))
                             .Returns(infoAfterChange);
 
         

@@ -34,9 +34,13 @@ public class AddressService : IAddressService
         if (entry is null)
         {
             _logger.LogInformation($"Failed attempt to update non-existing address for user {userId}.");
-            return new ResponseDto(false, "User has no existing data to update. Please submit complete personal information first.");
+            return new ResponseDto(false, "User has no existing address to update. Please submit complete personal information first.");
         }
-        _propertyChanger.UpdateAddress<T>(entry, propertyName, newValue);
+
+        try 
+        { var updatedEntry = _propertyChanger.UpdateProperty<T>(entry, propertyName, newValue); }
+        catch (ArgumentException)
+        { return new ResponseDto(false, "Invalid property"); }
 
         var change = _addressRepo.UpdateAddress(userId, entry);
         if (change is false)

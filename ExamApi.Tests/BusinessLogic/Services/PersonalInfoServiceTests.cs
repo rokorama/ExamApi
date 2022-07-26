@@ -202,7 +202,7 @@ public class PersonalInfoServiceTests
         var infoAfterChange = (PersonalInfo)ObjectCloner.CloneObject(infoBeforeChange);
         infoAfterChange.Email = newValue;
 
-        _propertyChangerMock.Setup(pc => pc.UpdatePersonalInfo(infoBeforeChange, propertyToChange, newValue))
+        _propertyChangerMock.Setup(pc => pc.UpdateProperty(infoBeforeChange, propertyToChange, newValue))
                             .Returns(infoAfterChange);
 
         

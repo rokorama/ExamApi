@@ -68,13 +68,20 @@ public class PersonalInfoService : IPersonalInfoService
         PersonalInfo? entry = _personalInfoRepo.GetInfo(userId);
         if (entry is null)
         {
-            // _logger.LogInformation($"Failed attempt to update non-existing personal info for user {userId}.");
+            _logger.LogInformation($"Failed attempt to update non-existing personal info for user {userId}.");
             return new ResponseDto(false, "No data to update. Please submit the full personal info form first.");
         }
-        var updatedEntry = _propertyChanger.UpdatePersonalInfo<T>(entry, propertyName, newValue);
+        
+        try
+        { var updatedEntry = _propertyChanger.UpdateProperty<T>(entry, propertyName, newValue); }
+        catch (ArgumentException)
+        { return new ResponseDto(false, "Invalid property"); }
+        
         if (_personalInfoValidator.Validate(entry).IsValid is false)
             return new ResponseDto(false, $"Cannot update {propertyName} to an invalid value.");
-            
-        return new ResponseDto() { Success = _personalInfoRepo.UpdateInfo(userId, (PersonalInfo)updatedEntry) };
+    
+        var change = _personalInfoRepo.UpdateInfo(userId, entry);
+
+        return new ResponseDto(true);
     }
 }
