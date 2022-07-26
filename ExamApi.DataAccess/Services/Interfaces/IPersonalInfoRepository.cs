@@ -9,5 +9,4 @@ public interface IPersonalInfoRepository
     public bool AddInfo(PersonalInfo personalInfo, Guid userId);
     public bool UpdateInfo(Guid userId, PersonalInfo entryToUpdate);
     public bool UserHasExistingPersonalInfo(Guid userId);
-    public bool UserHasExistingAddress(Guid userId);
 }

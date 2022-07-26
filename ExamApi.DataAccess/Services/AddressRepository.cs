@@ -4,26 +4,26 @@ using Microsoft.Extensions.Logging;
 
 namespace ExamApi.DataAccess;
 
-public class PersonalInfoRepository : IPersonalInfoRepository
+public class AddressRepository : IAddressRepository
 {
     private readonly AppDbContext _dbContext;
-    private readonly ILogger<PersonalInfoRepository> _logger;
+    private readonly ILogger<AddressRepository> _logger;
 
-    public PersonalInfoRepository(AppDbContext dbContext, ILogger<PersonalInfoRepository> logger)
+    public AddressRepository(AppDbContext dbContext, ILogger<AddressRepository> logger)
     {
         _dbContext = dbContext;
         _logger = logger;
     }
 
-    public bool AddInfo(PersonalInfo personalInfo, Guid userId)
+    public bool AddAddress(Address address, Guid userId)
     {
         var dbEntry = _dbContext.Users.Find(userId);
-        if (dbEntry is null)
+        if (dbEntry is null || dbEntry.PersonalInfo is null)
         {
-            _logger.LogInformation($"Failed attempt to append address to a nonexistent user. User ID: {userId}");
+            _logger.LogInformation($"Failed attempt to append address to a nonexistent user/personal info entry. User ID = {userId}");
             return false;
         }
-        dbEntry.PersonalInfo = personalInfo;
+        dbEntry.PersonalInfo.Address = address;
         _dbContext.Entry(dbEntry).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
         
         try
@@ -34,12 +34,12 @@ public class PersonalInfoRepository : IPersonalInfoRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Failed to update personal info entry {dbEntry.Id} at {DateTime.UtcNow}. {ex.Message}");
+            _logger.LogError($"Failed to update address entry {dbEntry.Id} at {DateTime.UtcNow}. {ex.Message}");
             return false;
         }
     }
 
-    public PersonalInfo? GetInfo(Guid userId)
+    public Address? GetAddress(Guid userId)
     {
         var result = _dbContext.Users.Include(u => u.PersonalInfo)
                                .Include(u => u.PersonalInfo!.Address)
@@ -47,26 +47,33 @@ public class PersonalInfoRepository : IPersonalInfoRepository
         if (result is null)
             return null;
         
-        return result.PersonalInfo;
+        return result.PersonalInfo!.Address;
     }
 
-    public Guid? GetInfoId(Guid userId)
+    public Guid? GetAddressId(Guid userId)
     {
-        var result = GetInfo(userId);
+        var result = GetAddress(userId);
         if (result is null)
             return null;
         return result.Id;
     }
 
-    public bool UpdateInfo(Guid userId, PersonalInfo updatedEntry)
+    public bool UserHasExistingAddress(Guid userId)
+    {
+        var result = GetAddress(userId);
+        return (result is not null);
+    }
+
+    public bool UpdateAddress(Guid userId, Address updatedEntry)
     {
         
-        var entryToUpdate = _dbContext.Users.Include(u => u.PersonalInfo)
-                                            .SingleOrDefault(u => u.Id == userId)!
-                                            .PersonalInfo;
-        entryToUpdate = updatedEntry;
-        _dbContext.Entry(entryToUpdate).State = Microsoft.EntityFrameworkCore.EntityState.Modified; 
-        try
+        var entryToUpdate = GetAddress(userId);
+        if (entryToUpdate is null)
+        {
+            _logger.LogInformation($"Failed attempt to update nonexistent address entry. User ID: {userId}");
+            return false;
+        }
+        try 
         {
             _dbContext.SaveChanges();
             _logger.LogInformation($"Personal information entry {updatedEntry.Id} updated at {DateTime.UtcNow}.");
@@ -77,13 +84,5 @@ public class PersonalInfoRepository : IPersonalInfoRepository
             _logger.LogError($"Failed to update personal info entry {updatedEntry.Id} at {DateTime.UtcNow}. {ex.Message}");
             return false;
         }
-    }
-
-    public bool UserHasExistingPersonalInfo(Guid userId)
-    {
-        var personalInfo = _dbContext.Users.Include(u => u.PersonalInfo)
-                                            .SingleOrDefault(u => u.Id == userId)!
-                                            .PersonalInfo;
-        return (personalInfo != null);
     }
 }

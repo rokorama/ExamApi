@@ -8,6 +8,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IPersonalInfoRepository, PersonalInfoRepository>();
+        services.AddScoped<IAddressRepository, AddressRepository>();
 
         return services;
     }

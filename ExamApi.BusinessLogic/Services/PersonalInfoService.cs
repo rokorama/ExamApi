@@ -44,7 +44,7 @@ public class PersonalInfoService : IPersonalInfoService
         if (!_personalInfoRepo.AddInfo(mappedEntry, userId))
             return new ResponseDto(false, "Failed to add entry to the database.");
         else
-            return new ResponseDto(true, null);
+            return new ResponseDto(true, "Info added successfully.");
     }
 
     public PersonalInfoDto? GetInfo(Guid userId)
