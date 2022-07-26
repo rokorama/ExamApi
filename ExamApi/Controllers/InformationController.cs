@@ -21,22 +21,19 @@ public class InformationController : ControllerBase
     private readonly IUserService _userService;
     private readonly ILogger<InformationController> _logger;
     private readonly IObjectMapper _mapper;
-    private readonly IValidator<PersonalInfoUploadRequest> _personalInfoValidator;
 
     public InformationController(
                                  IPersonalInfoService personalInfoService,
                                  IAddressService addressService,
                                  IUserService userService,
                                  ILogger<InformationController> logger,
-                                 IObjectMapper mapper,
-                                 IValidator<PersonalInfoUploadRequest> personalInfoValidator)
+                                 IObjectMapper mapper)
     {
         _personalInfoService = personalInfoService;
         _addressService = addressService;
         _userService = userService;
         _logger = logger;
         _mapper = mapper;
-        _personalInfoValidator = personalInfoValidator;
     }
 
     [Authorize]
@@ -44,11 +41,6 @@ public class InformationController : ControllerBase
     public ActionResult<PersonalInfoDto> AddPersonalInfo([FromForm] PersonalInfoUploadRequest uploadRequest)
     {
         var userId = _userService.GetUser(this.User!.Identity!.Name!).Id;
-        
-        // this is a mess
-        var validationResult = _personalInfoValidator.Validate(uploadRequest);
-        if (!validationResult.IsValid)
-            return BadRequest($"One or more values are invalid.");
 
         var result = _personalInfoService.AddInfo(uploadRequest, userId);
         if (result.Success is true)

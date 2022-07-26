@@ -4,6 +4,7 @@ using ExamApi.Models;
 using ExamApi.Models.DTOs;
 using ExamApi.Models.UploadRequests;
 using Microsoft.Extensions.Logging;
+using FluentValidation;
 
 namespace ExamApi.BusinessLogic;
 
@@ -13,20 +14,26 @@ public class PersonalInfoService : IPersonalInfoService
     private readonly ILogger<PersonalInfoService> _logger;
     private readonly IObjectMapper _mapper;
     private readonly IPropertyChanger _propertyChanger;
+    IValidator<PersonalInfoUploadRequest> _personalInfoUploadValidator;
 
     public PersonalInfoService(IPersonalInfoRepository personalInfoRepo,
                                ILogger<PersonalInfoService> logger,
                                IObjectMapper mapper,
-                               IPropertyChanger propertyChanger)
+                               IPropertyChanger propertyChanger,
+                               IValidator<PersonalInfoUploadRequest> personalInfoUploadValidator)
     {
         _personalInfoRepo = personalInfoRepo;
         _logger = logger;
         _mapper = mapper;
         _propertyChanger = propertyChanger;
+        _personalInfoUploadValidator = personalInfoUploadValidator;
     }
 
     public ResponseDto AddInfo(PersonalInfoUploadRequest uploadRequest, Guid userId)
     {
+        var validationResult = _personalInfoUploadValidator.Validate(uploadRequest);
+        if (!validationResult.IsValid)
+            return new ResponseDto(false, "One or more values are invalid.");
         if (_personalInfoRepo.UserHasExistingPersonalInfo(userId))
             return new ResponseDto(false, "Cannot submit personal info more than one per user.");
 

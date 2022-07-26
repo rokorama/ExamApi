@@ -1,4 +1,5 @@
 using ExamApi.BusinessLogic.Helpers;
+using ExamApi.Models.Validators;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
