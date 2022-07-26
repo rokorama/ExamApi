@@ -7,6 +7,7 @@ using ExamApi.DataAccess;
 using ExamApi.Models;
 using ExamApi.Models.DTOs;
 using ExamApi.Models.UploadRequests;
+using ExamApi.Tests.TestHelpers;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -198,7 +199,7 @@ public class PersonalInfoServiceTests
         var propertyToChange = "Email";
         var newValue = "test@aaaaa.com";
 
-        var infoAfterChange = infoBeforeChange;
+        var infoAfterChange = (PersonalInfo)ObjectCloner.CloneObject(infoBeforeChange);
         infoAfterChange.Email = newValue;
 
         _propertyChangerMock.Setup(pc => pc.UpdatePersonalInfo(infoBeforeChange, propertyToChange, newValue))
@@ -217,14 +218,16 @@ public class PersonalInfoServiceTests
     {
         // Arrange
         var userId = _fixture.Create<Guid>();
-        var infoBeforeChange = _fixture.Create<PersonalInfo>();
-        _repoMock.Setup(r => r.GetInfo(userId)).Returns(infoBeforeChange);
-        _repoMock.Setup(r => r.UpdateInfo(userId, It.IsAny<PersonalInfo>())).Returns(false);
         var propertyToChange = "Email";
         string newValue = null!;
+        var infoBeforeChange = _fixture.Create<PersonalInfo>();
+        var expectedResponseMessage = $"Cannot update {propertyToChange} to an invalid value.";
 
-        var infoAfterChange = infoBeforeChange;
+        var infoAfterChange = (PersonalInfo)ObjectCloner.CloneObject(infoBeforeChange);
         infoAfterChange.Email = null;
+
+        _repoMock.Setup(r => r.GetInfo(userId)).Returns(infoBeforeChange);
+        _repoMock.Setup(r => r.UpdateInfo(userId, It.IsAny<PersonalInfo>())).Returns(false);
 
             // Override the subject under testing - the validator is not working properly in testing 
             // and has to be set up specifically
@@ -242,11 +245,9 @@ public class PersonalInfoServiceTests
 
         // Assert
         Assert.False(change.Success);
-        Assert.Equal($"Cannot update {propertyToChange} to an invalid value.", change.Message);
+        Assert.Equal(expectedResponseMessage, change.Message);
     }
 
-    // public bool UpdateInfo<T>(Guid userId, string propertyName, T newValue);
-        // with no existing previous info
     [Fact]
     public void UpdateInfo_ReturnsFailure_WhenNoPreviousInfoExists()
     {
