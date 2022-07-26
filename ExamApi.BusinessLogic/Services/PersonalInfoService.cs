@@ -32,10 +32,10 @@ public class PersonalInfoService : IPersonalInfoService
     public ResponseDto AddInfo(PersonalInfoUploadRequest uploadRequest, Guid userId)
     {
         var validationResult = _personalInfoUploadValidator.Validate(uploadRequest);
-        if (!validationResult.IsValid)
-            return new ResponseDto(false, "One or more values are invalid.");
         if (_personalInfoRepo.UserHasExistingPersonalInfo(userId))
             return new ResponseDto(false, "Cannot submit personal info more than one per user.");
+        if (!validationResult.IsValid)
+            return new ResponseDto(false, "One or more values are invalid.");
 
         var mappedEntry = _mapper.MapPersonalInfoUpload(uploadRequest);
         if (!_personalInfoRepo.AddInfo(mappedEntry, userId))
@@ -54,10 +54,10 @@ public class PersonalInfoService : IPersonalInfoService
 
     public Guid? GetInfoId(Guid userId)
     {
-        var entry = _personalInfoRepo.GetInfo(userId);
+        var entry = _personalInfoRepo.GetInfoId(userId);
         if (entry is null)
             return null;
-        return entry.Id;
+        return entry;
     }
 
     public ResponseDto UpdateInfo<T>(Guid userId, string propertyName, T newValue)
