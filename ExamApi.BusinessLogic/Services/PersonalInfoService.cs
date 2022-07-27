@@ -14,8 +14,8 @@ public class PersonalInfoService : IPersonalInfoService
     private readonly ILogger<PersonalInfoService> _logger;
     private readonly IObjectMapper _mapper;
     private readonly IPropertyChanger _propertyChanger;
-    IValidator<PersonalInfoUploadRequest> _personalInfoUploadValidator;
-    IValidator<PersonalInfo> _personalInfoValidator;
+    private readonly IValidator<PersonalInfoUploadRequest> _personalInfoUploadValidator;
+    private readonly IValidator<PersonalInfo> _personalInfoValidator;
 
     public PersonalInfoService(IPersonalInfoRepository personalInfoRepo,
                                ILogger<PersonalInfoService> logger,
