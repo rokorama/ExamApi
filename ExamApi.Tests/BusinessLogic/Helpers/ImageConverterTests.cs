@@ -39,13 +39,16 @@ public class ImageConverterTests
     }
 
     [Fact]
-    public void ConvertImage_ThrowsUnknownImageFormatException_WithInvalidUpload()
+    public void ConvertImage_ThrowsNull_WithInvalidUpload()
     {
         // Arrange
         var sampleImageUpload = _fixture.Create<ImageUploadRequest>();
 
+        // Act
+        var result = _sut.ConvertImage(sampleImageUpload);
+
         // Assert
-        Assert.Throws<SixLabors.ImageSharp.UnknownImageFormatException>(() => _sut.ConvertImage(sampleImageUpload));
+        Assert.Null(result);
     }
 
     [Fact]
