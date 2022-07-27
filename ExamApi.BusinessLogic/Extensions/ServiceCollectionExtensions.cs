@@ -1,5 +1,8 @@
 using ExamApi.BusinessLogic.Helpers;
-using ExamApi.Models.Validators;
+using ExamApi.BusinessLogic.Validators;
+using ExamApi.Models;
+using ExamApi.Models.DTOs;
+using ExamApi.Models.UploadRequests;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,8 +17,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IObjectMapper, ObjectMapper>();
         services.AddScoped<IImageConverter, ImageConverter>();
         services.AddScoped<IPropertyChanger, PropertyChanger>();
-        services.AddValidatorsFromAssemblyContaining<PersonalInfoUploadRequestValidator>();
-        services.AddValidatorsFromAssemblyContaining<AddressDtoValidator>();
+        services.AddScoped<IValidator<PersonalInfoUploadRequest>, PersonalInfoUploadRequestValidator>();
+        services.AddScoped<IValidator<PersonalInfo>, PersonalInfoValidator>();
+        services.AddScoped<IValidator<AddressDto>, AddressDtoValidator>();
+        services.AddScoped<IValidator<Address>, AddressValidator>();
 
         return services;
     }

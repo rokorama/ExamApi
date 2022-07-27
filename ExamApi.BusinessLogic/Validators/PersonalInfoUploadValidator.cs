@@ -1,7 +1,7 @@
 using ExamApi.Models.UploadRequests;
 using FluentValidation;
 
-namespace ExamApi.Models.Validators;
+namespace ExamApi.BusinessLogic.Validators;
 
 public class PersonalInfoUploadRequestValidator : AbstractValidator<PersonalInfoUploadRequest>
 {
