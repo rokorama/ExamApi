@@ -33,7 +33,7 @@ public class InformationController : ControllerBase
         _userService = userService;
         _logger = logger;
         _mapper = mapper;
-        _baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
+        _baseUrl = $"{Request.Scheme}://{Request.Host}";
     }
 
     [Authorize]
@@ -41,18 +41,10 @@ public class InformationController : ControllerBase
     public ActionResult<PersonalInfoDto> AddPersonalInfo([FromForm] PersonalInfoUploadRequest uploadRequest)
     {
         var userId = _userService.GetUser(this.User!.Identity!.Name!).Id;
-
         var result = _personalInfoService.AddInfo(uploadRequest, userId);
-        // if (result.Success is not true)
-        //     return BadRequest(result.Message);
-
-
-
-        // return Created(new Uri(_baseUrl + "/Information/" + _personalInfoService.GetInfoId(userId) + "/personalInfo"),
-        //                _personalInfoService.GetInfo(userId));
 
         return (result.Success is false) ? BadRequest(result.Message)
-                                         : Created(new Uri(_baseUrl + "/Information/" + _personalInfoService.GetInfoId(userId) + "/personalInfo"),
+                                         : Created(new Uri(_baseUrl + "/Information/" + userId + "/personalInfo"),
                                                    _personalInfoService.GetInfo(userId));
     }
 
@@ -60,18 +52,16 @@ public class InformationController : ControllerBase
     public ActionResult<PersonalInfoDto> GetPersonalInfo([FromRoute] Guid userId)
     {
         var result = _personalInfoService.GetInfo(userId);
-        if (result is null)
-            return NotFound();
-        return Ok(result);
+
+        return (result is null) ? NotFound() : Ok(result);
     }
 
     [HttpGet("{userId}/address")]
     public ActionResult<PersonalInfoDto> GetAddress([FromRoute] Guid userId)
     {
         var result = _addressService.GetAddress(userId);
-        if (result is null)
-            return NotFound();
-        return Ok(result);
+
+        return (result is null) ? NotFound() : Ok(result);
     }
 
     [Authorize]
