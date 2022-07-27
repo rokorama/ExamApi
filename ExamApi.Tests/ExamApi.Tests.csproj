@@ -20,6 +20,7 @@
     <PackageReference Include="Autofac.Extras.Moq" Version="6.1.0"/>
     <PackageReference Include="AutoFixture.AutoMoq" Version="4.17.0"/>
     <PackageReference Include="AutoFixture.Xunit" Version="4.17.0"/>
+    <PackageReference Include="Moq.EntityFrameworkCore" Version="6.0.1.4"/>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ExamApi.BusinessLogic\ExamApi.BusinessLogic.csproj"/>

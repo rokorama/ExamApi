@@ -70,18 +70,19 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// // Migrate any database changes on startup (includes initial db creation)
+// using (var scope = app.Services.CreateScope())
+// {
+//     var dataContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();    
+//     dataContext.Database.EnsureCreated();
+//     dataContext.Database.Migrate();
+// }
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-}
-
-// migrate any database changes on startup (includes initial db creation)
-using (var scope = app.Services.CreateScope())
-{
-    var dataContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();    
-    dataContext.Database.Migrate();
 }
 
 app.UseHttpsRedirection();

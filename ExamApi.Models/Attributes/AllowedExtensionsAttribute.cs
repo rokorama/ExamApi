@@ -16,7 +16,7 @@ public class AllowedExtensionsAttribute : ValidationAttribute
         if (value is IFormFile file)
         {
             var extension = Path.GetExtension(file.FileName);
-            if (_allowedExtensions.Contains(extension.ToLower()))
+            if (!_allowedExtensions.Contains(extension.ToLower()))
             {
                 return new ValidationResult(GetErrorMessage());
             }

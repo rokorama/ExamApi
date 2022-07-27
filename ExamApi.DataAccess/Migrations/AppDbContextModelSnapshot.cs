@@ -42,7 +42,7 @@ namespace ExamApi.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Addresses");
+                    b.ToTable("Addresses", (string)null);
                 });
 
             modelBuilder.Entity("ExamApi.Models.PersonalInfo", b =>
@@ -73,7 +73,7 @@ namespace ExamApi.DataAccess.Migrations
 
                     b.HasIndex("AddressId");
 
-                    b.ToTable("PersonalInfos");
+                    b.ToTable("PersonalInfos", (string)null);
                 });
 
             modelBuilder.Entity("ExamApi.Models.User", b =>
@@ -101,7 +101,7 @@ namespace ExamApi.DataAccess.Migrations
 
                     b.HasIndex("PersonalInfoId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("ExamApi.Models.PersonalInfo", b =>

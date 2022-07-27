@@ -10,11 +10,18 @@ public class ImageConverter : IImageConverter
     public byte[] ConvertImage(ImageUploadRequest imageUploadRequest)
     {
         using var memoryStream = new MemoryStream();
-        imageUploadRequest.Image!.CopyTo(memoryStream);
-        return ResizeImage(memoryStream.ToArray());
+        try
+        {
+            imageUploadRequest.Image!.CopyTo(memoryStream);
+            return ResizeImage(memoryStream.ToArray());
+        }
+        catch (SixLabors.ImageSharp.UnknownImageFormatException)
+        {
+            return null!;
+        }
     }
 
-    private byte[] ResizeImage(byte[] imageBytes)
+    public virtual byte[] ResizeImage(byte[] imageBytes)
     {
         using (Image image = Image.Load(imageBytes))
         {

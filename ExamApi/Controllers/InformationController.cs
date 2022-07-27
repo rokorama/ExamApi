@@ -1,11 +1,9 @@
 using ExamApi.BusinessLogic;
 using ExamApi.BusinessLogic.Helpers;
-using ExamApi.Models;
 using ExamApi.Models.DTOs;
 using ExamApi.Models.UploadRequests;
 using ExamApi.UserAccess;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExamApi.Controllers;
@@ -18,33 +16,32 @@ public class InformationController : ControllerBase
     private readonly IAddressService _addressService;
     private readonly IUserService _userService;
     private readonly ILogger<InformationController> _logger;
-    private readonly IObjectMapper _mapper;
-    private readonly string _baseUrl;
+    private readonly IImageConverter _imageConverter;
 
-    public InformationController(
-                                 IPersonalInfoService personalInfoService,
+    public InformationController(IPersonalInfoService personalInfoService,
                                  IAddressService addressService,
                                  IUserService userService,
                                  ILogger<InformationController> logger,
-                                 IObjectMapper mapper)
+                                 IImageConverter imageConverter)
     {
         _personalInfoService = personalInfoService;
         _addressService = addressService;
         _userService = userService;
         _logger = logger;
-        _mapper = mapper;
-        _baseUrl = $"{Request.Scheme}://{Request.Host}";
+        _imageConverter = imageConverter;
     }
 
     [Authorize]
     [HttpPost]
     public ActionResult<PersonalInfoDto> AddPersonalInfo([FromForm] PersonalInfoUploadRequest uploadRequest)
     {
-        var userId = _userService.GetUser(this.User!.Identity!.Name!).Id;
+        var userId = _userService.GetUserId(this.User!.Identity!.Name!);
+        // var userId = Guid.NewGuid();
         var result = _personalInfoService.AddInfo(uploadRequest, userId);
+        var baseUrl = $"{Request.Scheme}://{Request.Host}";
 
         return (result.Success is false) ? BadRequest(result.Message)
-                                         : Created(new Uri(_baseUrl + "/Information/" + userId + "/personalInfo"),
+                                         : Created(new Uri(baseUrl + "/Information/" + userId + "/personalInfo"),
                                                    _personalInfoService.GetInfo(userId));
     }
 
@@ -56,101 +53,96 @@ public class InformationController : ControllerBase
         return (result is null) ? NotFound() : Ok(result);
     }
 
-    [HttpGet("{userId}/address")]
-    public ActionResult<PersonalInfoDto> GetAddress([FromRoute] Guid userId)
-    {
-        var result = _addressService.GetAddress(userId);
-
-        return (result is null) ? NotFound() : Ok(result);
-    }
-
     [Authorize]
     [HttpPatch("firstName")]
     public ActionResult UpdateFirstName([FromBody] string name)
     {
-        var userId = _userService.GetUser(this.User!.Identity!.Name!).Id;
-        if (String.IsNullOrWhiteSpace(name))
-            return BadRequest($"New value cannot be empty.");
-        _personalInfoService.UpdateInfo<string>(userId, "FirstName", name);
-        // throw up bad request if ResponseDto is negative
-        return NoContent();
+        var userId = _userService.GetUserId(this.User!.Identity!.Name!);
+        var result = _personalInfoService.UpdateInfo<string>(userId, "FirstName", name);
+
+        return (result.Success is false) ? BadRequest(result.Message) : NoContent();
+    }
+
+    [Authorize]
+    [HttpPatch("lastName")]
+    public ActionResult UpdateLastName([FromBody] string name)
+    {
+        var userId = _userService.GetUserId(this.User!.Identity!.Name!);
+        var result = _personalInfoService.UpdateInfo<string>(userId, "LastName", name);
+
+        return (result.Success is false) ? BadRequest(result.Message) : NoContent();
     }
 
     [Authorize]
     [HttpPatch("personalNumber")]
-    public ActionResult UpdateLastName([FromBody] ulong personalNo)
+    public ActionResult UpdatePersonalNo([FromBody] ulong personalNo)
     {
-        var user = _userService.GetUser(this.User!.Identity!.Name!).Id;
-        if (personalNo.ToString().Length != 11)
-            return BadRequest($"Invalid personal number format");
-        _personalInfoService.UpdateInfo<ulong>(user, "PersonalNumber", personalNo);
-        return NoContent();
+        var user = _userService.GetUserId(this.User!.Identity!.Name!);
+        var result = _personalInfoService.UpdateInfo<ulong>(user, "PersonalNumber", personalNo);
+
+        return (result.Success is false) ? BadRequest(result.Message) : NoContent();
     }
 
     [Authorize]
     [HttpPatch("email")]
     public ActionResult UpdateEmail([FromBody] string email)
     {
-        var user = _userService.GetUser(this.User!.Identity!.Name!).Id;
-        if (String.IsNullOrWhiteSpace(email))
-            return BadRequest($"New value cannot be empty.");
-        _personalInfoService.UpdateInfo<string>(user, "Email", email);
-        return NoContent();
+        var user = _userService.GetUserId(this.User!.Identity!.Name!);
+        var result = _personalInfoService.UpdateInfo<string>(user, "Email", email);
+
+        return (result.Success is false) ? BadRequest(result.Message) : NoContent();
     }
 
     [Authorize]
     [HttpPatch("photo")]
     public ActionResult UpdatePhoto([FromForm] ImageUploadRequest image)
     {
-        var user = _userService.GetUser(this.User!.Identity!.Name!).Id;
-        // var imageBytes = ImageConverter.ConvertImage(image);
+        var user = _userService.GetUserId(this.User!.Identity!.Name!);
+        var newImage = _imageConverter.ConvertImage(image);
+        if (newImage is null)
+            return BadRequest("Invalid photo provided. Please try a different file");
+        var result = _personalInfoService.UpdateInfo<byte[]>(user, "Photo", newImage);
 
-        //placeholder value
-        _personalInfoService.UpdateInfo<byte[]>(user, "Photo", new byte[] {});
-        return NoContent();
+        return (result.Success is false) ? BadRequest(result.Message) : NoContent();
     }
 
     [Authorize]
     [HttpPatch("city")]
     public ActionResult UpdateCity([FromBody] string city)
     {
-        var user = _userService.GetUser(this.User!.Identity!.Name!).Id;
-        if (String.IsNullOrWhiteSpace(city))
-            return BadRequest($"New value cannot be empty.");
-        _addressService.UpdateAddress<string>(user, "City", city);
-        return NoContent();
+        var user = _userService.GetUserId(this.User!.Identity!.Name!);
+        var result = _addressService.UpdateAddress<string>(user, "City", city);
+
+        return (result.Success is false) ? BadRequest(result.Message) : NoContent();
     }
 
     [Authorize]
     [HttpPatch("street")]
     public ActionResult UpdateStreet([FromBody] string street)
     {
-        var user = _userService.GetUser(this!.User!.Identity!.Name!).Id;
-        if (String.IsNullOrWhiteSpace(street))
-            return BadRequest($"New value cannot be empty.");
-        _addressService.UpdateAddress<string>(user, "Street", street);
-        return NoContent();
+        var user = _userService.GetUserId(this!.User!.Identity!.Name!);
+        var result = _addressService.UpdateAddress<string>(user, "Street", street);
+
+        return (result.Success is false) ? BadRequest(result.Message) : NoContent();
     }
 
     [Authorize]
     [HttpPatch("house")]
     public ActionResult UpdateHouse([FromBody] string house)
     {
-        var user = _userService.GetUser(this.User!.Identity!.Name!).Id;
-        if (String.IsNullOrWhiteSpace(house))
-            return BadRequest($"New value cannot be empty.");
-        _addressService.UpdateAddress<string>(user, "House", house);
-        return NoContent();
+        var user = _userService.GetUserId(this.User!.Identity!.Name!);
+        var result = _addressService.UpdateAddress<string>(user, "House", house);
+
+        return (result.Success is false) ? BadRequest(result.Message) : NoContent();
     }
 
     [Authorize]
     [HttpPatch("flat")]
     public ActionResult UpdateFlat(int? flat = null)
     {
-        var user = _userService.GetUser(this.User!.Identity!.Name!).Id;
-        var updateSuccessful = _addressService.UpdateAddress<int?>(user, "Flat", flat).Success;
-        if (updateSuccessful is false)
-            return BadRequest();
-        return NoContent();
+        var user = _userService.GetUserId(this.User!.Identity!.Name!);
+        var result = _addressService.UpdateAddress<int?>(user, "Flat", flat);
+
+        return (result.Success is false) ? BadRequest(result.Message) : NoContent();
     }
 }
