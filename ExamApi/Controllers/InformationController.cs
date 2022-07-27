@@ -4,11 +4,9 @@ using ExamApi.Models;
 using ExamApi.Models.DTOs;
 using ExamApi.Models.UploadRequests;
 using ExamApi.UserAccess;
-using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace ExamApi.Controllers;
 
@@ -43,14 +41,14 @@ public class InformationController : ControllerBase
         var userId = _userService.GetUser(this.User!.Identity!.Name!).Id;
 
         var result = _personalInfoService.AddInfo(uploadRequest, userId);
-        if (result.Success is true)
-        {
-            var mappedEntry = _personalInfoService.GetInfo(userId);
-            var entryId = _personalInfoService.GetInfoId(userId);
-            return Created(new Uri(Request.GetEncodedUrl() + "/" + entryId!), mappedEntry);        
-        }
-        else
-            return BadRequest("Cannot add submit personal info more than once per user.");
+        if (result.Success is not true)
+            return BadRequest(result.Message);
+
+        var request = HttpContext.Request;
+        var baseUrl = $"{request.Scheme}://{request.Host}";
+
+        return Created(new Uri(baseUrl + "/Information/" + _personalInfoService.GetInfoId(userId) + "/personalInfo"),
+                       _personalInfoService.GetInfo(userId));
     }
 
     [HttpGet("{userId}/personalInfo")]
@@ -75,10 +73,12 @@ public class InformationController : ControllerBase
     [HttpPatch("firstName")]
     public ActionResult UpdateFirstName([FromBody] string name)
     {
+        // move validation to service layer
         var userId = _userService.GetUser(this.User!.Identity!.Name!).Id;
         if (String.IsNullOrWhiteSpace(name))
             return BadRequest($"New value cannot be empty.");
         _personalInfoService.UpdateInfo<string>(userId, "FirstName", name);
+        // throw up bad request if ResponseDto is negative
         return NoContent();
     }
 
