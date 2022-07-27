@@ -19,6 +19,7 @@ public class InformationController : ControllerBase
     private readonly IUserService _userService;
     private readonly ILogger<InformationController> _logger;
     private readonly IObjectMapper _mapper;
+    private readonly string _baseUrl;
 
     public InformationController(
                                  IPersonalInfoService personalInfoService,
@@ -32,6 +33,7 @@ public class InformationController : ControllerBase
         _userService = userService;
         _logger = logger;
         _mapper = mapper;
+        _baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
     }
 
     [Authorize]
@@ -41,18 +43,21 @@ public class InformationController : ControllerBase
         var userId = _userService.GetUser(this.User!.Identity!.Name!).Id;
 
         var result = _personalInfoService.AddInfo(uploadRequest, userId);
-        if (result.Success is not true)
-            return BadRequest(result.Message);
+        // if (result.Success is not true)
+        //     return BadRequest(result.Message);
 
-        var request = HttpContext.Request;
-        var baseUrl = $"{request.Scheme}://{request.Host}";
 
-        return Created(new Uri(baseUrl + "/Information/" + _personalInfoService.GetInfoId(userId) + "/personalInfo"),
-                       _personalInfoService.GetInfo(userId));
+
+        // return Created(new Uri(_baseUrl + "/Information/" + _personalInfoService.GetInfoId(userId) + "/personalInfo"),
+        //                _personalInfoService.GetInfo(userId));
+
+        return (result.Success is false) ? BadRequest(result.Message)
+                                         : Created(new Uri(_baseUrl + "/Information/" + _personalInfoService.GetInfoId(userId) + "/personalInfo"),
+                                                   _personalInfoService.GetInfo(userId));
     }
 
     [HttpGet("{userId}/personalInfo")]
-    public ActionResult<PersonalInfoDto> GetPersonalInfo(Guid userId)
+    public ActionResult<PersonalInfoDto> GetPersonalInfo([FromRoute] Guid userId)
     {
         var result = _personalInfoService.GetInfo(userId);
         if (result is null)
@@ -61,7 +66,7 @@ public class InformationController : ControllerBase
     }
 
     [HttpGet("{userId}/address")]
-    public ActionResult<PersonalInfoDto> GetAddress(Guid userId)
+    public ActionResult<PersonalInfoDto> GetAddress([FromRoute] Guid userId)
     {
         var result = _addressService.GetAddress(userId);
         if (result is null)
@@ -73,7 +78,6 @@ public class InformationController : ControllerBase
     [HttpPatch("firstName")]
     public ActionResult UpdateFirstName([FromBody] string name)
     {
-        // move validation to service layer
         var userId = _userService.GetUser(this.User!.Identity!.Name!).Id;
         if (String.IsNullOrWhiteSpace(name))
             return BadRequest($"New value cannot be empty.");
