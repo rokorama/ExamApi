@@ -12,17 +12,17 @@ public class UserService : IUserService
         _userRepo = userRepo;
     }
 
-    public Guid GetUserId(string username)
+    public Guid? GetUserId(string username)
     {
-        return _userRepo.GetUser(username).Id;
+        return _userRepo.GetUserId(username);
     }
 
-    public User GetUser(string username)
+    public User? GetUser(string username)
     {
         return _userRepo.GetUser(username);
     }
 
-    public User GetUser(Guid id)
+    public User? GetUser(Guid id)
     {
         return _userRepo.GetUser(id);
     }

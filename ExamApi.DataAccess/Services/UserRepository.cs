@@ -15,18 +15,24 @@ public class UserRepository : IUserRepository
         _logger = logger;
     }
 
-    public User GetUser(string username)
+    public User? GetUser(string username)
     {
         return _dbContext.Users.Include(u => u.PersonalInfo)
                                .Include(u => u.PersonalInfo!.Address)
                                .SingleOrDefault(u => u.Username == username)!;
     }
 
-    public User GetUser(Guid userId)
+    public User? GetUser(Guid userId)
     {
         return _dbContext.Users.Include(u => u.PersonalInfo)
                                .Include(u => u.PersonalInfo!.Address)
                                .SingleOrDefault(i => i.Id == userId)!;
+    }
+
+    public Guid? GetUserId(string username)
+    {
+        var result = GetUser(username);
+        return result!.Id;
     }
 
     public bool AddNewUser(User user)
