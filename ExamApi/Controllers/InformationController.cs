@@ -36,13 +36,12 @@ public class InformationController : ControllerBase
     public ActionResult<PersonalInfoDto> AddPersonalInfo([FromForm] PersonalInfoUploadRequest uploadRequest)
     {
         var userId = _userService.GetUserId(this.User!.Identity!.Name!);
-        // var userId = Guid.NewGuid();
-        var result = _personalInfoService.AddInfo(uploadRequest, userId);
+        var result = _personalInfoService.AddInfo(uploadRequest, userId!.Value);
         var baseUrl = $"{Request.Scheme}://{Request.Host}";
 
         return (result.Success is false) ? BadRequest(result.Message)
                                          : Created(new Uri(baseUrl + "/Information/" + userId + "/personalInfo"),
-                                                   _personalInfoService.GetInfo(userId));
+                                                   _personalInfoService.GetInfo(userId!.Value));
     }
 
     [HttpGet("{userId}/personalInfo")]
@@ -55,83 +54,83 @@ public class InformationController : ControllerBase
 
     [Authorize]
     [HttpPatch("firstName")]
-    public ActionResult UpdateFirstName([FromBody] string name)
+    public ActionResult UpdateFirstName(string name)
     {
         var userId = _userService.GetUserId(this.User!.Identity!.Name!);
-        var result = _personalInfoService.UpdateInfo<string>(userId, "FirstName", name);
+        var result = _personalInfoService.UpdateInfo<string>(userId!.Value, "FirstName", name);
 
         return (result.Success is false) ? BadRequest(result.Message) : NoContent();
     }
 
     [Authorize]
     [HttpPatch("lastName")]
-    public ActionResult UpdateLastName([FromBody] string name)
+    public ActionResult UpdateLastName(string name)
     {
         var userId = _userService.GetUserId(this.User!.Identity!.Name!);
-        var result = _personalInfoService.UpdateInfo<string>(userId, "LastName", name);
+        var result = _personalInfoService.UpdateInfo<string>(userId!.Value, "LastName", name);
 
         return (result.Success is false) ? BadRequest(result.Message) : NoContent();
     }
 
     [Authorize]
     [HttpPatch("personalNumber")]
-    public ActionResult UpdatePersonalNo([FromBody] ulong personalNo)
+    public ActionResult UpdatePersonalNo(ulong personalNo)
     {
-        var user = _userService.GetUserId(this.User!.Identity!.Name!);
-        var result = _personalInfoService.UpdateInfo<ulong>(user, "PersonalNumber", personalNo);
+        var userId = _userService.GetUserId(this.User!.Identity!.Name!);
+        var result = _personalInfoService.UpdateInfo<ulong>(userId!.Value, "PersonalNumber", personalNo);
 
         return (result.Success is false) ? BadRequest(result.Message) : NoContent();
     }
 
     [Authorize]
     [HttpPatch("email")]
-    public ActionResult UpdateEmail([FromBody] string email)
+    public ActionResult UpdateEmail(string email)
     {
-        var user = _userService.GetUserId(this.User!.Identity!.Name!);
-        var result = _personalInfoService.UpdateInfo<string>(user, "Email", email);
+        var userId = _userService.GetUserId(this.User!.Identity!.Name!);
+        var result = _personalInfoService.UpdateInfo<string>(userId!.Value, "Email", email);
 
         return (result.Success is false) ? BadRequest(result.Message) : NoContent();
     }
 
     [Authorize]
     [HttpPatch("photo")]
-    public ActionResult UpdatePhoto([FromForm] ImageUploadRequest image)
+    public ActionResult UpdatePhoto(ImageUploadRequest image)
     {
-        var user = _userService.GetUserId(this.User!.Identity!.Name!);
+        var userId = _userService.GetUserId(this.User!.Identity!.Name!);
         var newImage = _imageConverter.ConvertImage(image);
         if (newImage is null)
             return BadRequest("Invalid photo provided. Please try a different file");
-        var result = _personalInfoService.UpdateInfo<byte[]>(user, "Photo", newImage);
+        var result = _personalInfoService.UpdateInfo<byte[]>(userId!.Value, "Photo", newImage);
 
         return (result.Success is false) ? BadRequest(result.Message) : NoContent();
     }
 
     [Authorize]
     [HttpPatch("city")]
-    public ActionResult UpdateCity([FromBody] string city)
+    public ActionResult UpdateCity(string city)
     {
-        var user = _userService.GetUserId(this.User!.Identity!.Name!);
-        var result = _addressService.UpdateAddress<string>(user, "City", city);
+        var userId = _userService.GetUserId(this.User!.Identity!.Name!);
+        var result = _addressService.UpdateAddress<string>(userId!.Value, "City", city);
 
         return (result.Success is false) ? BadRequest(result.Message) : NoContent();
     }
 
     [Authorize]
     [HttpPatch("street")]
-    public ActionResult UpdateStreet([FromBody] string street)
+    public ActionResult UpdateStreet(string street)
     {
-        var user = _userService.GetUserId(this!.User!.Identity!.Name!);
-        var result = _addressService.UpdateAddress<string>(user, "Street", street);
+        var userId = _userService.GetUserId(this!.User!.Identity!.Name!);
+        var result = _addressService.UpdateAddress<string>(userId!.Value, "Street", street);
 
         return (result.Success is false) ? BadRequest(result.Message) : NoContent();
     }
 
     [Authorize]
     [HttpPatch("house")]
-    public ActionResult UpdateHouse([FromBody] string house)
+    public ActionResult UpdateHouse(string house)
     {
-        var user = _userService.GetUserId(this.User!.Identity!.Name!);
-        var result = _addressService.UpdateAddress<string>(user, "House", house);
+        var userId = _userService.GetUserId(this.User!.Identity!.Name!);
+        var result = _addressService.UpdateAddress<string>(userId!.Value, "House", house);
 
         return (result.Success is false) ? BadRequest(result.Message) : NoContent();
     }
@@ -140,8 +139,8 @@ public class InformationController : ControllerBase
     [HttpPatch("flat")]
     public ActionResult UpdateFlat(int? flat = null)
     {
-        var user = _userService.GetUserId(this.User!.Identity!.Name!);
-        var result = _addressService.UpdateAddress<int?>(user, "Flat", flat);
+        var userId = _userService.GetUserId(this.User!.Identity!.Name!);
+        var result = _addressService.UpdateAddress<int?>(userId!.Value, "Flat", flat);
 
         return (result.Success is false) ? BadRequest(result.Message) : NoContent();
     }

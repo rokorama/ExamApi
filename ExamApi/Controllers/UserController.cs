@@ -30,20 +30,22 @@ public class UserController : ControllerBase
     {
         _logger.LogInformation($"Getting user info for user {id}");
         var result = _userService.GetUser(id);
-        if (result == null)
-            return NotFound();
-        return Ok(result);
+
+        return (result is null) ? NotFound() : Ok(result);
     }
 
     [HttpPost("signup")]
     public ActionResult<User> Signup([FromForm] UserDto userDto)
     {
-        // move this check somewhere?
-        if (_userService.GetUser(userDto.Username!) != null)
-            return BadRequest($"This username is taken, please try another.");
-        var newUser = _loginService.CreateUser(userDto.Username!, userDto.Password!);
-        _logger.LogInformation($"New user {newUser.Id} created at {DateTime.Now}");
-        return Created(new Uri(Request.GetEncodedUrl() + "/" + newUser.Id), newUser);
+        var baseUrl = $"{Request.Scheme}://{Request.Host}";
+
+        var result = _loginService.CreateUser(userDto.Username!, userDto.Password!);
+        if (result.Success is false)
+            return BadRequest(result.Message);
+
+        var newUser = _userService.GetUser(userDto.Username!);
+        _logger.LogInformation($"New user {newUser!.Username} created at {DateTime.Now}");
+        return Created(new Uri(baseUrl + "/User/" + newUser.Id), newUser);
     }
 
     [HttpPost("login")]
@@ -66,8 +68,6 @@ public class UserController : ControllerBase
     [HttpDelete("{userId}")]
     public ActionResult<bool> DeleteUser([FromRoute] Guid userId)
     {
-        if (!_userService.DeleteUser(userId))
-            return BadRequest();
-        return NoContent();
+        return (!_userService.DeleteUser(userId))? BadRequest() : NoContent();
     }
 }

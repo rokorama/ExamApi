@@ -1,5 +1,6 @@
 using ExamApi.DataAccess;
 using ExamApi.Models;
+using ExamApi.Models.DTOs;
 
 namespace ExamApi.UserAccess;
 
@@ -13,8 +14,11 @@ public class LoginService : ILoginService
         _jwtService = jwtService;
         _userRepo = userRepo;
     }
-    public User CreateUser(string username, string password)
+    public ResponseDto CreateUser(string username, string password)
     {
+        if (_userRepo.GetUser(username) is not null)
+            return new ResponseDto(false, "This username is taken, please try another");
+        
         CreatePassword(password, out string passwordHash);
         var user = new User()
         {
@@ -22,14 +26,11 @@ public class LoginService : ILoginService
             Password = passwordHash,
             Role = "User",
         };
-        if (_userRepo.AddNewUser(user))
-            return user;
-        //TODO - handle this
+        
+        if (_userRepo.AddNewUser(user) is not true)
+            return new ResponseDto(false, "Failed to add user.");
         else
-        {
-            // what
-            throw new Exception();
-        }
+            return new ResponseDto(true);
     }
 
     public string Login(string username, string password)
